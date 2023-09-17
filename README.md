@@ -152,3 +152,4 @@ Please ensure to abide by our [Code of Conduct][code-of-conduct] during all inte
 bug fix
 bug fix
 new feature
+new feature
