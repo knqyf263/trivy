@@ -2,7 +2,7 @@ name: Release Please
 on:
   push:
     branches:
-      - main
+      - release-* # release branches
 
 permissions:
   contents: write
@@ -17,3 +17,4 @@ jobs:
           release-type: go
           skip-github-release: true
           pull-request-title-pattern: "chore: release ${version}"
+          default-branch: ${{ github.ref_name }}
