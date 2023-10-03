@@ -3,6 +3,7 @@ package analyzer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"regexp"
@@ -91,6 +92,7 @@ type Group string
 const GroupBuiltin Group = "builtin"
 
 func RegisterAnalyzer(analyzer analyzer) {
+	fmt.Println("Test #5313")
 	if _, ok := analyzers[analyzer.Type()]; ok {
 		log.Logger.Fatalf("analyzer %s is registered twice", analyzer.Type())
 	}
