@@ -17,7 +17,55 @@ type (
 const (
 	ArtifactJSONSchemaVersion = 1
 	BlobJSONSchemaVersion     = 2
+
+	SBOM TargetType = "sbom"
 )
+
+func (l TargetType) PkgType() PkgType {
+	switch l {
+	case Alpine, Chainguard, Wolfi:
+		return PkgTypeApk
+	case Alma, CBLMariner, CentOS, Fedora, OpenSUSE, OpenSUSELeap, OpenSUSETumbleweed,
+		Oracle, Photon, RedHat, Rocky, SLES:
+		return PkgTypeRPM
+	case Debian, Ubuntu:
+		return PkgTypeDeb
+	case Bundler, GemSpec:
+		return PkgTypeGem
+	case Cargo, RustBinary:
+		return PkgTypeCargo
+	case Composer:
+		return PkgTypeComposer
+	case Npm, Yarn, Pnpm, JavaScript, NodePkg:
+		return PkgTypeNPM
+	case NuGet, DotNetCore:
+		return PkgTypeNuGet
+	case Pip, Pipenv, Poetry, PythonPkg:
+		return PkgTypePyPI
+	case CondaPkg:
+		// It should be "conda", but there are no security advisories for conda packages.
+		// Therefore, we use "pypi" for now.
+		return PkgTypePyPI
+	case POM, Gradle, JAR:
+		return PkgTypeMaven
+	case GoBinary, GoModule:
+		return PkgTypeGolang
+	case Conan:
+		return PkgTypeConan
+	case Cocoapods:
+		return PkgTypeCocoapods
+	case Swift:
+		return PkgTypeSwift
+	case Pub:
+		return PkgTypePub
+	case Hex:
+		return PkgTypeHex
+	case K8sUpstream:
+		return PkgTypeK8s
+	default:
+		return PkgType(l)
+	}
+}
 
 // Operating systems
 const (
@@ -58,19 +106,18 @@ const (
 	NodePkg    LangType = "node-pkg"
 	Yarn       LangType = "yarn"
 	Pnpm       LangType = "pnpm"
-	Jar        LangType = "jar"
-	Pom        LangType = "pom"
+	JAR        LangType = "jar"
+	POM        LangType = "pom"
 	Gradle     LangType = "gradle"
 	GoBinary   LangType = "gobinary"
 	GoModule   LangType = "gomod"
-	JavaScript LangType = "javascript"
+	JavaScript LangType = "javascript" // For Trivy Premium
 	RustBinary LangType = "rustbinary"
 	Conan      LangType = "conan"
 	Cocoapods  LangType = "cocoapods"
 	Swift      LangType = "swift"
 	Pub        LangType = "pub"
 	Hex        LangType = "hex"
-	Bitnami    LangType = "bitnami"
 
 	K8sUpstream LangType = "kubernetes"
 	EKS         LangType = "eks" // Amazon Elastic Kubernetes Service
@@ -130,3 +177,69 @@ const (
 
 	MixLock = "mix.lock"
 )
+
+// PkgType represents the type of package.
+// It basically corresponds to the PURL type.
+type PkgType string
+
+// Taken from packageurl-go
+// cf. https://github.com/package-url/packageurl-go/blob/fe183c1943ec36f257fae7143e160978217104b6/packageurl.go
+const (
+	PkgTypeApk PkgType = "apk"
+	PkgTypeDeb PkgType = "deb"
+	PkgTypeRPM PkgType = "rpm"
+
+	PkgTypeCargo     PkgType = "cargo"
+	PkgTypeCocoapods PkgType = "cocoapods"
+	PkgTypeComposer  PkgType = "composer"
+	PkgTypeConan     PkgType = "conan"
+	PkgTypeConda     PkgType = "conda"
+	PkgTypeGem       PkgType = "gem"
+	PkgTypeGolang    PkgType = "golang"
+	PkgTypeHex       PkgType = "hex"
+	PkgTypeMaven     PkgType = "maven"
+	PkgTypeNPM       PkgType = "npm"
+	PkgTypeNuGet     PkgType = "nuget"
+	PkgTypePub       PkgType = "pub"
+	PkgTypePyPI      PkgType = "pypi"
+	PkgTypeSwift     PkgType = "swift"
+
+	PkgTypeBitnami PkgType = "bitnami"
+	PkgTypeOCI     PkgType = "oci"
+
+	// Custom
+	PkgTypeK8s PkgType = "k8s"
+)
+
+var (
+	// SupportedPkgTypes is a map of package types that are supported by Trivy.
+	SupportedPkgTypes = map[PkgType]struct{}{
+		PkgTypeApk: {},
+		PkgTypeDeb: {},
+		PkgTypeRPM: {},
+
+		PkgTypeCargo:     {},
+		PkgTypeCocoapods: {},
+		PkgTypeComposer:  {},
+		PkgTypeConan:     {},
+		PkgTypeConda:     {},
+		PkgTypeGem:       {},
+		PkgTypeGolang:    {},
+		PkgTypeHex:       {},
+		PkgTypeMaven:     {},
+		PkgTypeNPM:       {},
+		PkgTypeNuGet:     {},
+		PkgTypePub:       {},
+		PkgTypePyPI:      {},
+		PkgTypeSwift:     {},
+
+		PkgTypeBitnami: {},
+		PkgTypeOCI:     {},
+
+		PkgTypeK8s: {},
+	}
+)
+
+func (t PkgType) OSPkg() bool {
+	return t == PkgTypeApk || t == PkgTypeDeb || t == PkgTypeRPM
+}

@@ -155,22 +155,22 @@ func (pkgs Packages) ParentDeps() map[string]Packages {
 	return parents
 }
 
-type SrcPackage struct {
-	Name        string   `json:"name"`
-	Version     string   `json:"version"`
-	BinaryNames []string `json:"binaryNames"`
-}
-
 type PackageInfo struct {
 	FilePath string
 	Packages Packages
 }
 
 type Application struct {
-	// e.g. bundler and pipenv
-	Type LangType
+	// SrcType represents the source type of the application.
+	// e.g. pipenv, jar and gobinary
+	// Serialized as "Type" in JSON for backward compatibility.
+	SrcType LangType `json:"Type"`
 
-	// Lock files have the file path here, while each package metadata do not have
+	// PkgType represents the high-level category of the package.
+	// e.g., pypi, golang and npm
+	PkgType PkgType
+
+	// Lock files have the file path here, while each package metadata do not have.
 	FilePath string `json:",omitempty"`
 
 	// Libraries is a list of lang-specific packages

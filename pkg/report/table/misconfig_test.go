@@ -203,7 +203,7 @@ See https://google.com/search?q=bad%20config
 			input: types.Result{
 				Target: "terraform-aws-modules/security-group/aws/main.tf",
 				Class:  types.ClassConfig,
-				Type:   "terraform",
+				Source: ftypes.Terraform,
 				MisconfSummary: &types.MisconfSummary{
 					Successes:  5,
 					Failures:   1,

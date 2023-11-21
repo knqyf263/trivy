@@ -542,7 +542,7 @@ func findIDs(ids []string, results types.Results) serialize.Results {
 			filtered = append(filtered, serialize.Result{
 				Target:            result.Target,
 				Class:             result.Class,
-				Type:              result.Type,
+				Source:            result.Source,
 				Vulnerabilities:   vulns,
 				Misconfigurations: misconfs,
 			})
@@ -554,7 +554,7 @@ func findIDs(ids []string, results types.Results) serialize.Results {
 func updateResults(gotResults, results types.Results) {
 	for _, g := range gotResults {
 		for i, result := range results {
-			if g.Target == result.Target && g.Class == result.Class && g.Type == result.Type {
+			if g.Target == result.Target && g.Class == result.Class && g.Source == result.Source {
 				results[i].Vulnerabilities = lo.Map(result.Vulnerabilities, func(v types.DetectedVulnerability, _ int) types.DetectedVulnerability {
 					// Update vulnerabilities in the existing result
 					for _, got := range g.Vulnerabilities {
@@ -593,7 +593,7 @@ func deleteResults(gotResults, results types.Results) {
 	for _, gotResult := range gotResults {
 		for i, result := range results {
 			// Remove vulnerabilities and misconfigurations from the existing result
-			if gotResult.Target == result.Target && gotResult.Class == result.Class && gotResult.Type == result.Type {
+			if gotResult.Target == result.Target && gotResult.Class == result.Class && gotResult.Source == result.Source {
 				results[i].Vulnerabilities = lo.Reject(result.Vulnerabilities, func(v types.DetectedVulnerability, _ int) bool {
 					for _, got := range gotResult.Vulnerabilities {
 						if got.VulnerabilityID == v.VulnerabilityID && got.PkgName == v.PkgName &&

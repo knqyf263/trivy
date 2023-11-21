@@ -87,7 +87,7 @@ func TestScanner_ScanArtifact(t *testing.T) {
 									FixedVersion:     ">=3.4.0",
 								},
 							},
-							Type: "npm",
+							Source: "npm",
 						},
 					},
 					OsFound: ftypes.OS{
@@ -139,7 +139,7 @@ func TestScanner_ScanArtifact(t *testing.T) {
 								FixedVersion:     ">=3.4.0",
 							},
 						},
-						Type: "npm",
+						Source: "npm",
 					},
 				},
 			},

@@ -26,9 +26,10 @@ func TestWriter_Write(t *testing.T) {
 				ArtifactName:  "alpine:3.14",
 				Results: types.Results{
 					{
-						Target: "yarn.lock",
-						Class:  "lang-pkgs",
-						Type:   "yarn",
+						Target:  "yarn.lock",
+						Class:   "lang-pkgs",
+						Source:  ftypes.Yarn,
+						PkgType: ftypes.PkgTypeNPM,
 						Packages: []ftypes.Package{
 							{
 								Name:    "@xtuc/ieee754",
@@ -94,9 +95,10 @@ func TestWriter_Write(t *testing.T) {
 				ArtifactName:  "my-java-app",
 				Results: types.Results{
 					{
-						Target: "pom.xml",
-						Class:  "lang-pkgs",
-						Type:   "pom",
+						Target:  "pom.xml",
+						Class:   "lang-pkgs",
+						Source:  ftypes.POM,
+						PkgType: ftypes.PkgTypeMaven,
 						Packages: []ftypes.Package{
 							{
 								Name:    "com.google.code.gson:gson",

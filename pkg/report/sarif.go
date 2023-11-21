@@ -200,7 +200,7 @@ func (sw *SarifWriter) Write(report types.Report) error {
 				helpMarkdown: fmt.Sprintf(`**Misconfiguration %v**\n| Type | Severity | Check | Message | Link |\n| --- | --- | --- | --- | --- |\n|%v|%v|%v|%s|[%v](%v)|\n\n%v`,
 					misconf.ID, misconf.Type, misconf.Severity, misconf.Title, misconf.Message, misconf.ID, misconf.PrimaryURL, misconf.Description),
 				message: fmt.Sprintf(`Artifact: %v\nType: %v\nVulnerability %v\nSeverity: %v\nMessage: %v\nLink: [%v](%v)`,
-					res.Target, res.Type, misconf.ID, misconf.Severity, misconf.Message, misconf.ID, misconf.PrimaryURL),
+					res.Target, res.Source, misconf.ID, misconf.Severity, misconf.Message, misconf.ID, misconf.PrimaryURL),
 			})
 		}
 		for _, secret := range res.Secrets {
@@ -227,7 +227,7 @@ func (sw *SarifWriter) Write(report types.Report) error {
 				helpMarkdown: fmt.Sprintf(`**Secret %v**\n| Severity | Match |\n| --- | --- |\n|%v|%v|`,
 					secret.Title, secret.Severity, secret.Match),
 				message: fmt.Sprintf(`Artifact: %v\nType: %v\nSecret %v\nSeverity: %v\nMatch: %v`,
-					res.Target, res.Type, secret.Title, secret.Severity, secret.Match),
+					res.Target, res.Source, secret.Title, secret.Severity, secret.Match),
 			})
 		}
 		for _, license := range res.Licenses {

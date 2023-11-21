@@ -26,7 +26,8 @@ func Test_nodePkgLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NodePkg,
+						SrcType:  types.NodePkg,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "testdata/package.json",
 						Libraries: types.Packages{
 							{
@@ -48,7 +49,8 @@ func Test_nodePkgLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NodePkg,
+						SrcType:  types.NodePkg,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "testdata/package.json",
 						Libraries: types.Packages{
 							{

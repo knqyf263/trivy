@@ -349,7 +349,7 @@ func TestConvertFromRPCResults(t *testing.T) {
 			want: []types.Result{
 				{
 					Target: "alpine:3.10",
-					Type:   ftypes.Alpine,
+					Source: ftypes.Alpine,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2019-0001",
@@ -439,7 +439,7 @@ func TestConvertFromRPCResults(t *testing.T) {
 			want: []types.Result{
 				{
 					Target: "alpine:3.10",
-					Type:   ftypes.Alpine,
+					Source: ftypes.Alpine,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2019-0001",

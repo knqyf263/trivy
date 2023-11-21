@@ -24,7 +24,8 @@ func Test_composerAnalyzer_PostAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Composer,
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "composer.lock",
 						Libraries: types.Packages{
 							{
@@ -65,7 +66,8 @@ func Test_composerAnalyzer_PostAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Composer,
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "composer.lock",
 						Libraries: types.Packages{
 							{
@@ -106,7 +108,8 @@ func Test_composerAnalyzer_PostAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Composer,
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "composer.lock",
 						Libraries: types.Packages{
 							{

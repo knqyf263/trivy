@@ -638,7 +638,7 @@ func (s *cacheServer) servePutArtifact(ctx context.Context, resp http.ResponseWr
 	case "application/protobuf":
 		s.servePutArtifactProtobuf(ctx, resp, req)
 	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		msg := fmt.Sprintf("unexpected Content-SrcType: %q", req.Header.Get("Content-Type"))
 		twerr := badRouteError(msg, req.Method, req.URL.Path)
 		s.writeError(ctx, resp, twerr)
 	}
@@ -818,7 +818,7 @@ func (s *cacheServer) servePutBlob(ctx context.Context, resp http.ResponseWriter
 	case "application/protobuf":
 		s.servePutBlobProtobuf(ctx, resp, req)
 	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		msg := fmt.Sprintf("unexpected Content-SrcType: %q", req.Header.Get("Content-Type"))
 		twerr := badRouteError(msg, req.Method, req.URL.Path)
 		s.writeError(ctx, resp, twerr)
 	}
@@ -998,7 +998,7 @@ func (s *cacheServer) serveMissingBlobs(ctx context.Context, resp http.ResponseW
 	case "application/protobuf":
 		s.serveMissingBlobsProtobuf(ctx, resp, req)
 	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		msg := fmt.Sprintf("unexpected Content-SrcType: %q", req.Header.Get("Content-Type"))
 		twerr := badRouteError(msg, req.Method, req.URL.Path)
 		s.writeError(ctx, resp, twerr)
 	}
@@ -1178,7 +1178,7 @@ func (s *cacheServer) serveDeleteBlobs(ctx context.Context, resp http.ResponseWr
 	case "application/protobuf":
 		s.serveDeleteBlobsProtobuf(ctx, resp, req)
 	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		msg := fmt.Sprintf("unexpected Content-SrcType: %q", req.Header.Get("Content-Type"))
 		twerr := badRouteError(msg, req.Method, req.URL.Path)
 		s.writeError(ctx, resp, twerr)
 	}

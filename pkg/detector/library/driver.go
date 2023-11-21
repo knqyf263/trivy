@@ -20,67 +20,67 @@ import (
 )
 
 // NewDriver returns a driver according to the library type
-func NewDriver(libType ftypes.LangType) (Driver, bool) {
+func NewDriver(pkgType ftypes.PkgType) (Driver, bool) {
 	var ecosystem dbTypes.Ecosystem
 	var comparer compare.Comparer
 
-	switch libType {
-	case ftypes.Bundler, ftypes.GemSpec:
+	switch pkgType {
+	case ftypes.PkgTypeGem:
 		ecosystem = vulnerability.RubyGems
 		comparer = rubygems.Comparer{}
-	case ftypes.RustBinary, ftypes.Cargo:
+	case ftypes.PkgTypeCargo:
 		ecosystem = vulnerability.Cargo
 		comparer = compare.GenericComparer{}
-	case ftypes.Composer:
+	case ftypes.PkgTypeComposer:
 		ecosystem = vulnerability.Composer
 		comparer = compare.GenericComparer{}
-	case ftypes.GoBinary, ftypes.GoModule:
+	case ftypes.PkgTypeGolang:
 		ecosystem = vulnerability.Go
 		comparer = compare.GenericComparer{}
-	case ftypes.Jar, ftypes.Pom, ftypes.Gradle:
+	case ftypes.PkgTypeMaven:
 		ecosystem = vulnerability.Maven
 		comparer = maven.Comparer{}
-	case ftypes.Npm, ftypes.Yarn, ftypes.Pnpm, ftypes.NodePkg, ftypes.JavaScript:
+	case ftypes.PkgTypeNPM:
 		ecosystem = vulnerability.Npm
 		comparer = npm.Comparer{}
-	case ftypes.NuGet, ftypes.DotNetCore:
+	case ftypes.PkgTypeNuGet:
 		ecosystem = vulnerability.NuGet
 		comparer = compare.GenericComparer{}
-	case ftypes.Pipenv, ftypes.Poetry, ftypes.Pip, ftypes.PythonPkg:
+	case ftypes.PkgTypePyPI:
 		ecosystem = vulnerability.Pip
 		comparer = pep440.Comparer{}
-	case ftypes.Pub:
+	case ftypes.PkgTypePub:
 		ecosystem = vulnerability.Pub
 		comparer = compare.GenericComparer{}
-	case ftypes.Hex:
+	case ftypes.PkgTypeHex:
 		ecosystem = vulnerability.Erlang
 		comparer = compare.GenericComparer{}
-	case ftypes.Conan:
+	case ftypes.PkgTypeConan:
 		ecosystem = vulnerability.Conan
 		// Only semver can be used for version ranges
 		// https://docs.conan.io/en/latest/versioning/version_ranges.html
 		comparer = compare.GenericComparer{}
-	case ftypes.Swift:
+	case ftypes.PkgTypeSwift:
 		// Swift uses semver
 		// https://www.swift.org/package-manager/#importing-dependencies
 		ecosystem = vulnerability.Swift
 		comparer = compare.GenericComparer{}
-	case ftypes.Cocoapods:
+	case ftypes.PkgTypeCocoapods:
 		// CocoaPods uses RubyGems version specifiers
 		// https://guides.cocoapods.org/making/making-a-cocoapod.html#cocoapods-versioning-specifics
 		ecosystem = vulnerability.Cocoapods
 		comparer = rubygems.Comparer{}
-	case ftypes.CondaPkg:
+	case ftypes.PkgTypeConda:
 		log.Logger.Warn("Conda package is supported for SBOM, not for vulnerability scanning")
 		return Driver{}, false
-	case ftypes.Bitnami:
+	case ftypes.PkgTypeBitnami:
 		ecosystem = vulnerability.Bitnami
 		comparer = compare.GenericComparer{}
-	case ftypes.K8sUpstream:
+	case ftypes.PkgTypeK8s:
 		ecosystem = vulnerability.Kubernetes
 		comparer = compare.GenericComparer{}
 	default:
-		log.Logger.Warnf("The %q library type is not supported for vulnerability scanning", libType)
+		log.Logger.Warnf("The %q package type is not supported for vulnerability scanning", pkgType)
 		return Driver{}, false
 	}
 	return Driver{

@@ -1,6 +1,7 @@
 package ospkg
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -32,7 +33,8 @@ func (s *scanner) Packages(target types.ScanTarget, _ types.ScanOptions) types.R
 	return types.Result{
 		Target:   fmt.Sprintf("%s (%s %s)", target.Name, target.OS.Family, target.OS.Name),
 		Class:    types.ClassOSPkg,
-		Type:     target.OS.Family,
+		Source:   target.OS.Family,
+		PkgType:  target.OS.Family.PkgType(), // TODO: store PkgType in ScanTarget
 		Packages: target.Packages,
 	}
 }
@@ -51,7 +53,7 @@ func (s *scanner) Scan(target types.ScanTarget, _ types.ScanOptions) (types.Resu
 
 	vulns, eosl, err := ospkgDetector.Detect("", target.OS.Family, target.OS.Name, target.Repository, time.Time{},
 		target.Packages)
-	if err == ospkgDetector.ErrUnsupportedOS {
+	if errors.Is(err, ospkgDetector.ErrUnsupportedOS) {
 		return types.Result{}, false, nil
 	} else if err != nil {
 		return types.Result{}, false, xerrors.Errorf("failed vulnerability detection of OS packages: %w", err)
@@ -62,6 +64,7 @@ func (s *scanner) Scan(target types.ScanTarget, _ types.ScanOptions) (types.Resu
 		Target:          artifactDetail,
 		Vulnerabilities: vulns,
 		Class:           types.ClassOSPkg,
-		Type:            target.OS.Family,
+		Source:          target.OS.Family,
+		PkgType:         target.OS.Family.PkgType(),
 	}, eosl, nil
 }

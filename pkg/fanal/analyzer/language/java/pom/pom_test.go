@@ -26,7 +26,8 @@ func Test_pomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pom,
+						SrcType:  types.POM,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/happy/pom.xml",
 						Libraries: types.Packages{
 							{
@@ -47,7 +48,8 @@ func Test_pomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pom,
+						SrcType:  types.POM,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "pom.xml",
 						Libraries: types.Packages{
 							{
@@ -67,7 +69,8 @@ func Test_pomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pom,
+						SrcType:  types.POM,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/requirements/pom.xml",
 						Libraries: types.Packages{
 							{

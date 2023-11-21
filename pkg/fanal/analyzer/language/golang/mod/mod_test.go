@@ -29,7 +29,8 @@ func Test_gomodAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoModule,
+						SrcType:  types.GoModule,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "go.mod",
 						Libraries: types.Packages{
 							{
@@ -62,7 +63,8 @@ func Test_gomodAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoModule,
+						SrcType:  types.GoModule,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "go.mod",
 						Libraries: types.Packages{
 							{
@@ -84,7 +86,8 @@ func Test_gomodAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoModule,
+						SrcType:  types.GoModule,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "go.mod",
 						Libraries: types.Packages{
 							{
@@ -117,7 +120,8 @@ func Test_gomodAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoModule,
+						SrcType:  types.GoModule,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "go.mod",
 						Libraries: types.Packages{
 							{

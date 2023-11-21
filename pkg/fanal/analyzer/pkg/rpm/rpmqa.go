@@ -87,7 +87,7 @@ func (a rpmqaPkgAnalyzer) Required(filePath string, _ os.FileInfo) bool {
 }
 
 func (a rpmqaPkgAnalyzer) Type() analyzer.Type {
-	return analyzer.TypeRpmqa
+	return analyzer.TypeRPMqa
 }
 
 func (a rpmqaPkgAnalyzer) Version() int {

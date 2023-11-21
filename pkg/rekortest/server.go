@@ -98,7 +98,7 @@ var (
 						Version: "3.16.2",
 						Properties: &[]cyclonedx.Property{
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:SrcType",
 								Value: "alpine",
 							},
 							{
@@ -201,7 +201,7 @@ var (
 						Name:   "go.mod",
 						Properties: &[]cyclonedx.Property{
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:SrcType",
 								Value: "gomod",
 							},
 							{

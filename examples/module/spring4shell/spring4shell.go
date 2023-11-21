@@ -144,7 +144,7 @@ func (Spring4Shell) PostScanSpec() serialize.PostScanSpec {
 //	  "Class": "custom",
 //	  "CustomResources": [
 //	    {
-//	      "Type": "spring4shell/java-major-version",
+//	      "SrcType": "spring4shell/java-major-version",
 //	      "FilePath": "/usr/local/openjdk-8/release",
 //	      "Layer": {
 //	        "Digest": "sha256:d7b564a873af313eb2dbcb1ed0d393c57543e3666bdedcbe5d75841d72b1f791",
@@ -153,7 +153,7 @@ func (Spring4Shell) PostScanSpec() serialize.PostScanSpec {
 //	      "Data": "1.8.0_322"
 //	    },
 //	    {
-//	      "Type": "spring4shell/tomcat-version",
+//	      "SrcType": "spring4shell/tomcat-version",
 //	      "FilePath": "/usr/local/tomcat/RELEASE-NOTES",
 //	      "Layer": {
 //	        "Digest": "sha256:59c0978ccb117247fd40d936973c40df89195f60466118c5acc6a55f8ba29f06",
@@ -166,7 +166,7 @@ func (Spring4Shell) PostScanSpec() serialize.PostScanSpec {
 //	{
 //	  "Target": "Java",
 //	  "Class": "lang-pkgs",
-//	  "Type": "jar",
+//	  "SrcType": "jar",
 //	  "Vulnerabilities": [
 //	    {
 //	      "VulnerabilityID": "CVE-2022-22965",

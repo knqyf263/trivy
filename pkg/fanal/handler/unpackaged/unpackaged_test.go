@@ -38,7 +38,8 @@ func Test_unpackagedHook_Handle(t *testing.T) {
 			want: &types.BlobInfo{
 				Applications: []types.Application{
 					{
-						Type:     types.GoModule,
+						SrcType:  types.GoModule,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "go.mod",
 						Libraries: types.Packages{
 							{

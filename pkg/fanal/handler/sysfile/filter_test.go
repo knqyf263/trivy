@@ -61,7 +61,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     types.Pipenv,
+						SrcType:  types.Pipenv,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "app/Pipfile.lock",
 						Libraries: types.Packages{
 							{
@@ -71,7 +72,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 						},
 					},
 					{
-						Type: types.PythonPkg,
+						SrcType: types.PythonPkg,
+						PkgType: types.PkgTypePyPI,
 						Libraries: types.Packages{
 							{
 								Name:     "python",
@@ -86,7 +88,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "usr/lib64/python2.7/wsgiref.egg-info",
 						Libraries: types.Packages{
 							{
@@ -96,7 +99,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.GoBinary,
+						SrcType:  types.GoBinary,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "usr/local/bin/goBinariryFile",
 						Libraries: types.Packages{
 							{
@@ -138,7 +142,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     types.Pipenv,
+						SrcType:  types.Pipenv,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "app/Pipfile.lock",
 						Libraries: types.Packages{
 							{
@@ -148,7 +153,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 						},
 					},
 					{
-						Type: types.PythonPkg,
+						SrcType: types.PythonPkg,
+						PkgType: types.PkgTypePyPI,
 						Libraries: types.Packages{
 							{
 								Name:     "pycurl",
@@ -158,7 +164,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.GoBinary,
+						SrcType:  types.GoBinary,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "usr/local/bin/goBinariryFile",
 						Libraries: types.Packages{
 							{
@@ -183,7 +190,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 			blob: &types.BlobInfo{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "usr/lib/python2.7/lib-dynload/Python-2.7.egg-info",
 						Libraries: types.Packages{
 							{
@@ -207,7 +215,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 			blob: &types.BlobInfo{
 				Applications: []types.Application{
 					{
-						Type:     types.GoBinary,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "usr/local/bin/goreleaser",
 						Libraries: types.Packages{
 							{
@@ -230,7 +239,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 			blob: &types.BlobInfo{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "app/Cargo.lock",
 						Libraries: types.Packages{
 							{
@@ -244,7 +254,8 @@ func Test_systemFileFilterHook_Hook(t *testing.T) {
 			want: &types.BlobInfo{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "app/Cargo.lock",
 						Libraries: types.Packages{
 							{

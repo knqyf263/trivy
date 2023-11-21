@@ -66,7 +66,8 @@ func TestAnalysisResult_Merge(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     "bundler",
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "app/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -92,7 +93,8 @@ func TestAnalysisResult_Merge(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type:     "bundler",
+							SrcType:  types.Bundler,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "app2/Gemfile.lock",
 							Libraries: types.Packages{
 								{
@@ -131,7 +133,8 @@ func TestAnalysisResult_Merge(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     "bundler",
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "app/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -141,7 +144,8 @@ func TestAnalysisResult_Merge(t *testing.T) {
 						},
 					},
 					{
-						Type:     "bundler",
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "app2/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -372,7 +376,8 @@ func TestAnalyzerGroup_AnalyzeFile(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     "bundler",
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "/app/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -433,7 +438,8 @@ func TestAnalyzerGroup_AnalyzeFile(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     "bundler",
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "/app/Gemfile-dev.lock",
 						Libraries: types.Packages{
 							{
@@ -566,7 +572,8 @@ func TestAnalyzerGroup_PostAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Jar,
+						SrcType:  types.JAR,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/post-apps/jar/jackson-annotations-2.15.0-rc2.jar",
 						Libraries: types.Packages{
 							{
@@ -586,7 +593,8 @@ func TestAnalyzerGroup_PostAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Poetry,
+						SrcType:  types.Poetry,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/post-apps/poetry/happy/poetry.lock",
 						Libraries: types.Packages{
 							{

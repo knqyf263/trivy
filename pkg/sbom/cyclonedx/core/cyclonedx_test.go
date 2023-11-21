@@ -108,7 +108,7 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 										Value: "os-pkgs",
 									},
 									{
-										Name:  "Type",
+										Name:  "SrcType",
 										Value: "ubuntu",
 									},
 								},
@@ -122,7 +122,7 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 										Value: "lang-pkgs",
 									},
 									{
-										Name:  "Type",
+										Name:  "SrcType",
 										Value: "golang",
 									},
 								},
@@ -171,7 +171,6 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 					},
 				},
 			},
-
 			want: &cdx.BOM{
 				XMLNS:        "http://cyclonedx.org/schema/bom/1.5",
 				BOMFormat:    "CycloneDX",
@@ -191,8 +190,8 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 					Component: &cdx.Component{
 						BOMRef:     "3ff14136-e09f-4df9-80ea-000000000002",
 						Name:       "test-cluster",
-						Properties: &[]cdx.Property{},
 						Type:       cdx.ComponentTypeContainer,
+						Properties: &[]cdx.Property{},
 					},
 				},
 				Vulnerabilities: &[]cdx.Vulnerability{},
@@ -246,7 +245,7 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 								Value: "os-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:SrcType",
 								Value: "ubuntu",
 							},
 						},
@@ -261,7 +260,7 @@ func TestMarshaler_CoreComponent(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:SrcType",
 								Value: "golang",
 							},
 						},

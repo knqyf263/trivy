@@ -26,7 +26,8 @@ func Test_gobinaryLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoBinary,
+						SrcType:  types.GoBinary,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "testdata/executable_gobinary",
 						Libraries: types.Packages{
 							{

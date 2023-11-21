@@ -29,7 +29,7 @@ func TestArtifact_Inspect(t *testing.T) {
 			filePath: filepath.Join("testdata", "bom.json"),
 			putBlobExpectation: cache.ArtifactCachePutBlobExpectation{
 				Args: cache.ArtifactCachePutBlobArgs{
-					BlobID: "sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+					BlobID: "sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 					BlobInfo: types.BlobInfo{
 						SchemaVersion: types.BlobJSONSchemaVersion,
 						OS: types.OS{
@@ -55,7 +55,8 @@ func TestArtifact_Inspect(t *testing.T) {
 						},
 						Applications: []types.Application{
 							{
-								Type:     "composer",
+								SrcType:  types.Composer,
+								PkgType:  types.PkgTypeComposer,
 								FilePath: "app/composer/composer.lock",
 								Libraries: types.Packages{
 									{
@@ -78,7 +79,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "gobinary",
+								SrcType:  types.GoBinary,
+								PkgType:  types.PkgTypeGolang,
 								FilePath: "app/gobinary/gobinary",
 								Libraries: types.Packages{
 									{
@@ -92,7 +94,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "jar",
+								SrcType:  types.JAR,
+								PkgType:  types.PkgTypeMaven,
 								FilePath: "",
 								Libraries: types.Packages{
 									{
@@ -107,7 +110,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "node-pkg",
+								SrcType:  types.NodePkg,
+								PkgType:  types.PkgTypeNPM,
 								FilePath: "",
 								Libraries: types.Packages{
 									{
@@ -130,9 +134,9 @@ func TestArtifact_Inspect(t *testing.T) {
 			want: types.ArtifactReference{
 				Name: filepath.Join("testdata", "bom.json"),
 				Type: types.ArtifactCycloneDX,
-				ID:   "sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+				ID:   "sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 				BlobIDs: []string{
-					"sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+					"sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 				},
 			},
 		},
@@ -141,7 +145,7 @@ func TestArtifact_Inspect(t *testing.T) {
 			filePath: filepath.Join("testdata", "sbom.cdx.intoto.jsonl"),
 			putBlobExpectation: cache.ArtifactCachePutBlobExpectation{
 				Args: cache.ArtifactCachePutBlobArgs{
-					BlobID: "sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+					BlobID: "sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 					BlobInfo: types.BlobInfo{
 						SchemaVersion: types.BlobJSONSchemaVersion,
 						OS: types.OS{
@@ -167,7 +171,8 @@ func TestArtifact_Inspect(t *testing.T) {
 						},
 						Applications: []types.Application{
 							{
-								Type:     "composer",
+								SrcType:  types.Composer,
+								PkgType:  types.PkgTypeComposer,
 								FilePath: "app/composer/composer.lock",
 								Libraries: types.Packages{
 									{
@@ -190,7 +195,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "gobinary",
+								SrcType:  types.GoBinary,
+								PkgType:  types.PkgTypeGolang,
 								FilePath: "app/gobinary/gobinary",
 								Libraries: types.Packages{
 									{
@@ -204,7 +210,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "jar",
+								SrcType:  types.JAR,
+								PkgType:  types.PkgTypeMaven,
 								FilePath: "",
 								Libraries: types.Packages{
 									{
@@ -219,7 +226,8 @@ func TestArtifact_Inspect(t *testing.T) {
 								},
 							},
 							{
-								Type:     "node-pkg",
+								SrcType:  types.NodePkg,
+								PkgType:  types.PkgTypeNPM,
 								FilePath: "",
 								Libraries: types.Packages{
 									{
@@ -242,9 +250,9 @@ func TestArtifact_Inspect(t *testing.T) {
 			want: types.ArtifactReference{
 				Name: filepath.Join("testdata", "sbom.cdx.intoto.jsonl"),
 				Type: types.ArtifactCycloneDX,
-				ID:   "sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+				ID:   "sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 				BlobIDs: []string{
-					"sha256:3dca5f9082ac4e9669b5e461ae54ffe70db4ea275a09506014b17e012687e855",
+					"sha256:64872bb72137bff5ee88382cbfaab12f489727a0e11a1e6ccaec9e1b0a6541eb",
 				},
 			},
 		},

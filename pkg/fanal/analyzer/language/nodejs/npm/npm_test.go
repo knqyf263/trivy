@@ -31,7 +31,8 @@ func Test_npmLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Npm,
+						SrcType:  types.Npm,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "package-lock.json",
 						Libraries: types.Packages{
 							{
@@ -146,7 +147,8 @@ func Test_npmLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Npm,
+						SrcType:  types.Npm,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "package-lock.json",
 						Libraries: types.Packages{
 							{

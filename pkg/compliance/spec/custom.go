@@ -49,7 +49,7 @@ func filterVulns(result types.Result, severity dbTypes.Severity) types.Result {
 	return types.Result{
 		Target:          result.Target,
 		Class:           result.Class,
-		Type:            result.Type,
+		Source:          result.Source,
 		Vulnerabilities: filtered,
 	}
 }
@@ -69,7 +69,7 @@ func filterSecrets(result types.Result, severity dbTypes.Severity) types.Result 
 	return types.Result{
 		Target:  result.Target,
 		Class:   result.Class,
-		Type:    result.Type,
+		Source:  result.Source,
 		Secrets: filtered,
 	}
 }

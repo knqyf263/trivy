@@ -49,9 +49,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				},
 				Results: types.Results{
 					{
-						Target: "rails:latest (centos 8.3.2011)",
-						Class:  types.ClassOSPkg,
-						Type:   ftypes.CentOS,
+						Target:  "rails:latest (centos 8.3.2011)",
+						Class:   types.ClassOSPkg,
+						Source:  ftypes.CentOS,
+						PkgType: ftypes.PkgTypeRPM,
 						Packages: []ftypes.Package{
 							{
 								ID:              "binutils@2.30-93.el8",
@@ -114,9 +115,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "app/subproject/Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "app/subproject/Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								ID:       "actionpack@7.0.0",
@@ -136,9 +138,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "app/Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "app/Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								ID:      "actionpack@7.0.0",
@@ -148,9 +151,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "app/datacollector.deps.json",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.DotNetCore,
+						Target:  "app/datacollector.deps.json",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.DotNetCore,
+						PkgType: ftypes.PkgTypeNuGet,
 						Packages: []ftypes.Package{
 							{
 								ID:      "Newtonsoft.Json@9.0.1",
@@ -160,9 +164,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "usr/local/bin/tfsec",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.GoBinary,
+						Target:  "usr/local/bin/tfsec",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.GoBinary,
+						PkgType: ftypes.PkgTypeGolang,
 						Packages: []ftypes.Package{
 							{
 								Name:    "golang.org/x/crypto",
@@ -238,7 +243,11 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "os-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "rpm",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "centos",
 							},
 						},
@@ -254,7 +263,11 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "gem",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "bundler",
 							},
 						},
@@ -270,7 +283,11 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "gem",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "bundler",
 							},
 						},
@@ -286,7 +303,11 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "nuget",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "dotnet-core",
 							},
 						},
@@ -302,23 +323,22 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "golang",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "gobinary",
 							},
 						},
 					},
 					{
 						// Use UUID for local Go packages
-						BOMRef:  "3ff14136-e09f-4df9-80ea-000000000007",
-						Type:    cdx.ComponentTypeLibrary,
-						Name:    "./api",
-						Version: "(devel)",
-						Properties: &[]cdx.Property{
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "gobinary",
-							},
-						},
+						BOMRef:     "3ff14136-e09f-4df9-80ea-000000000007",
+						Type:       cdx.ComponentTypeLibrary,
+						Name:       "./api",
+						Version:    "(devel)",
+						Properties: &[]cdx.Property{},
 					},
 					{
 						BOMRef:     "pkg:gem/actioncontroller@7.0.0",
@@ -330,10 +350,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 							{
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "actioncontroller@7.0.0",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "bundler",
 							},
 						},
 					},
@@ -348,10 +364,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "actionpack@7.0.0",
 							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "bundler",
-							},
 						},
 					},
 					{
@@ -360,12 +372,7 @@ func TestMarshaler_Marshal(t *testing.T) {
 						Name:       "golang.org/x/crypto",
 						Version:    "v0.0.0-20210421170649-83a5a9bb288b",
 						PackageURL: "pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b",
-						Properties: &[]cdx.Property{
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "gobinary",
-							},
-						},
+						Properties: &[]cdx.Property{},
 					},
 					{
 						BOMRef:     "pkg:nuget/Newtonsoft.Json@9.0.1",
@@ -377,10 +384,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 							{
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "Newtonsoft.Json@9.0.1",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "dotnet-core",
 							},
 						},
 					},
@@ -404,10 +407,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 							{
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "binutils@2.30-93.el8",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "centos",
 							},
 							{
 								Name:  "aquasecurity:trivy:SrcName",
@@ -587,9 +586,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				},
 				Results: types.Results{
 					{
-						Target: "centos:latest (centos 8.3.2011)",
-						Class:  types.ClassOSPkg,
-						Type:   ftypes.CentOS,
+						Target:  "centos:latest (centos 8.3.2011)",
+						Class:   types.ClassOSPkg,
+						Source:  ftypes.CentOS,
+						PkgType: ftypes.PkgTypeRPM,
 						Packages: []ftypes.Package{
 							{
 								ID:              "acl@2.2.53-1.el8",
@@ -627,9 +627,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "Ruby",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.GemSpec,
+						Target:  "Ruby",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.GemSpec,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								ID:      "actionpack@7.0.0",
@@ -794,8 +795,31 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "os-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "rpm",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
 								Value: "centos",
+							},
+						},
+					},
+					{
+						BOMRef: "3ff14136-e09f-4df9-80ea-000000000004",
+						Type:   cdx.ComponentTypeApplication,
+						Name:   "Ruby",
+						Properties: &[]cdx.Property{
+							{
+								Name:  "aquasecurity:trivy:Class",
+								Value: "lang-pkgs",
+							},
+							{
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "gem",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
+								Value: "gemspec",
 							},
 						},
 					},
@@ -818,10 +842,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "actionpack@7.0.0",
 							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "gemspec",
-							},
 						},
 					},
 					{
@@ -843,10 +863,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "actionpack@7.0.1",
 							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "gemspec",
-							},
 						},
 					},
 					{
@@ -866,10 +882,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 							{
 								Name:  "aquasecurity:trivy:PkgID",
 								Value: "acl@2.2.53-1.el8",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "centos",
 							},
 							{
 								Name:  "aquasecurity:trivy:SrcEpoch",
@@ -914,10 +926,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "glibc@2.28-151.el8",
 							},
 							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "centos",
-							},
-							{
 								Name:  "aquasecurity:trivy:SrcName",
 								Value: "glibc",
 							},
@@ -943,8 +951,7 @@ func TestMarshaler_Marshal(t *testing.T) {
 						Ref: "3ff14136-e09f-4df9-80ea-000000000002",
 						Dependencies: &[]string{
 							"3ff14136-e09f-4df9-80ea-000000000003",
-							"pkg:gem/actionpack@7.0.0?file_path=tools%2Fproject-john%2Fspecifications%2Factionpack.gemspec",
-							"pkg:gem/actionpack@7.0.1?file_path=tools%2Fproject-doe%2Fspecifications%2Factionpack.gemspec",
+							"3ff14136-e09f-4df9-80ea-000000000004",
 						},
 					},
 					{
@@ -953,6 +960,13 @@ func TestMarshaler_Marshal(t *testing.T) {
 							"pkg:rpm/centos/acl@2.2.53-1.el8?arch=aarch64&distro=centos-8.3.2011&epoch=1",
 							// Trivy is unable to identify the direct OS packages as of today.
 							"pkg:rpm/centos/glibc@2.28-151.el8?arch=aarch64&distro=centos-8.3.2011",
+						},
+					},
+					{
+						Ref: "3ff14136-e09f-4df9-80ea-000000000004",
+						Dependencies: &[]string{
+							"pkg:gem/actionpack@7.0.0?file_path=tools%2Fproject-john%2Fspecifications%2Factionpack.gemspec",
+							"pkg:gem/actionpack@7.0.1?file_path=tools%2Fproject-doe%2Fspecifications%2Factionpack.gemspec",
 						},
 					},
 					{
@@ -1063,9 +1077,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				ArtifactType:  ftypes.ArtifactFilesystem,
 				Results: types.Results{
 					{
-						Target: "Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								Name:    "actioncable",
@@ -1074,9 +1089,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "Java",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Jar,
+						Target:  "Java",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.JAR,
+						PkgType: ftypes.PkgTypeMaven,
 						Packages: []ftypes.Package{
 							{
 								Name:     "org.springframework:spring-web",
@@ -1126,8 +1142,31 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Value: "lang-pkgs",
 							},
 							{
-								Name:  "aquasecurity:trivy:Type",
-								Value: "bundler",
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: string(ftypes.PkgTypeGem),
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
+								Value: string(ftypes.Bundler),
+							},
+						},
+					},
+					{
+						BOMRef: "3ff14136-e09f-4df9-80ea-000000000004",
+						Type:   cdx.ComponentTypeApplication,
+						Name:   "Java",
+						Properties: &[]cdx.Property{
+							{
+								Name:  "aquasecurity:trivy:Class",
+								Value: "lang-pkgs",
+							},
+							{
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: string(ftypes.PkgTypeMaven),
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
+								Value: string(ftypes.JAR),
 							},
 						},
 					},
@@ -1137,12 +1176,7 @@ func TestMarshaler_Marshal(t *testing.T) {
 						Name:       "actioncable",
 						Version:    "6.1.4.1",
 						PackageURL: "pkg:gem/actioncable@6.1.4.1",
-						Properties: &[]cdx.Property{
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "bundler",
-							},
-						},
+						Properties: &[]cdx.Property{},
 					},
 					{
 						BOMRef:     "pkg:maven/org.springframework/spring-web@5.3.22?file_path=spring-web-5.3.22.jar",
@@ -1156,10 +1190,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Name:  "aquasecurity:trivy:FilePath",
 								Value: "spring-web-5.3.22.jar",
 							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "jar",
-							},
 						},
 					},
 				},
@@ -1169,13 +1199,19 @@ func TestMarshaler_Marshal(t *testing.T) {
 						Ref: "3ff14136-e09f-4df9-80ea-000000000002",
 						Dependencies: &[]string{
 							"3ff14136-e09f-4df9-80ea-000000000003",
-							"pkg:maven/org.springframework/spring-web@5.3.22?file_path=spring-web-5.3.22.jar",
+							"3ff14136-e09f-4df9-80ea-000000000004",
 						},
 					},
 					{
 						Ref: "3ff14136-e09f-4df9-80ea-000000000003",
 						Dependencies: &[]string{
 							"pkg:gem/actioncable@6.1.4.1",
+						},
+					},
+					{
+						Ref: "3ff14136-e09f-4df9-80ea-000000000004",
+						Dependencies: &[]string{
+							"pkg:maven/org.springframework/spring-web@5.3.22?file_path=spring-web-5.3.22.jar",
 						},
 					},
 					{
@@ -1197,9 +1233,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				ArtifactType:  ftypes.ArtifactFilesystem,
 				Results: types.Results{
 					{
-						Target: "Java",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Jar,
+						Target:  "Java",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.JAR,
+						PkgType: ftypes.PkgTypeMaven,
 						Packages: []ftypes.Package{
 							{
 								Name:     "org.apache.nifi:nifi-dbcp-base",
@@ -1331,6 +1368,25 @@ func TestMarshaler_Marshal(t *testing.T) {
 				},
 				Components: &[]cdx.Component{
 					{
+						BOMRef: "3ff14136-e09f-4df9-80ea-000000000003",
+						Type:   cdx.ComponentTypeApplication,
+						Name:   "Java",
+						Properties: &[]cdx.Property{
+							{
+								Name:  "aquasecurity:trivy:Class",
+								Value: "lang-pkgs",
+							},
+							{
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "maven",
+							},
+							{
+								Name:  "aquasecurity:trivy:Source",
+								Value: "jar",
+							},
+						},
+					},
+					{
 						BOMRef:     "pkg:maven/org.apache.nifi/nifi-dbcp-base@1.20.0?file_path=nifi-dbcp-base-1.20.0.jar",
 						Type:       "library",
 						Name:       "nifi-dbcp-base",
@@ -1341,10 +1397,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 							{
 								Name:  "aquasecurity:trivy:FilePath",
 								Value: "nifi-dbcp-base-1.20.0.jar",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "jar",
 							},
 						},
 					},
@@ -1360,16 +1412,18 @@ func TestMarshaler_Marshal(t *testing.T) {
 								Name:  "aquasecurity:trivy:FilePath",
 								Value: "nifi-hikari-dbcp-service-1.20.0.jar",
 							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "jar",
-							},
 						},
 					},
 				},
 				Dependencies: &[]cdx.Dependency{
 					{
 						Ref: "3ff14136-e09f-4df9-80ea-000000000002",
+						Dependencies: &[]string{
+							"3ff14136-e09f-4df9-80ea-000000000003",
+						},
+					},
+					{
+						Ref: "3ff14136-e09f-4df9-80ea-000000000003",
 						Dependencies: &[]string{
 							"pkg:maven/org.apache.nifi/nifi-dbcp-base@1.20.0?file_path=nifi-dbcp-base-1.20.0.jar",
 							"pkg:maven/org.apache.nifi/nifi-hikari-dbcp-service@1.20.0?file_path=nifi-hikari-dbcp-service-1.20.0.jar",
@@ -1447,109 +1501,6 @@ func TestMarshaler_Marshal(t *testing.T) {
 								},
 							},
 						},
-					},
-				},
-			},
-		},
-		{
-			name: "happy path aggregate results",
-			inputReport: types.Report{
-				SchemaVersion: report.SchemaVersion,
-				ArtifactName:  "test-aggregate",
-				ArtifactType:  ftypes.ArtifactRepository,
-				Results: types.Results{
-					{
-						Target: "Node.js",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.NodePkg,
-						Packages: []ftypes.Package{
-							{
-								ID:       "ruby-typeprof@0.20.1",
-								Name:     "ruby-typeprof",
-								Version:  "0.20.1",
-								Licenses: []string{"MIT"},
-								Layer: ftypes.Layer{
-									DiffID: "sha256:661c3fd3cc16b34c070f3620ca6b03b6adac150f9a7e5d0e3c707a159990f88e",
-								},
-								FilePath: "usr/local/lib/ruby/gems/3.1.0/gems/typeprof-0.21.1/vscode/package.json",
-							},
-						},
-					},
-				},
-			},
-			want: &cdx.BOM{
-				XMLNS:        "http://cyclonedx.org/schema/bom/1.5",
-				BOMFormat:    "CycloneDX",
-				SpecVersion:  cdx.SpecVersion1_5,
-				JSONSchema:   "http://cyclonedx.org/schema/bom-1.5.schema.json",
-				SerialNumber: "urn:uuid:3ff14136-e09f-4df9-80ea-000000000001",
-				Version:      1,
-				Metadata: &cdx.Metadata{
-					Timestamp: "2021-08-25T12:20:30+00:00",
-					Tools: &[]cdx.Tool{
-						{
-							Name:    "trivy",
-							Vendor:  "aquasecurity",
-							Version: "dev",
-						},
-					},
-					Component: &cdx.Component{
-						Type:   cdx.ComponentTypeApplication,
-						Name:   "test-aggregate",
-						BOMRef: "3ff14136-e09f-4df9-80ea-000000000002",
-						Properties: &[]cdx.Property{
-							{
-								Name:  "aquasecurity:trivy:SchemaVersion",
-								Value: "2",
-							},
-						},
-					},
-				},
-				Components: &[]cdx.Component{
-					{
-						BOMRef:     "pkg:npm/ruby-typeprof@0.20.1?file_path=usr%2Flocal%2Flib%2Fruby%2Fgems%2F3.1.0%2Fgems%2Ftypeprof-0.21.1%2Fvscode%2Fpackage.json",
-						Type:       "library",
-						Name:       "ruby-typeprof",
-						Version:    "0.20.1",
-						PackageURL: "pkg:npm/ruby-typeprof@0.20.1",
-						Licenses: &cdx.Licenses{
-							cdx.LicenseChoice{
-								License: &cdx.License{
-									Name: "MIT",
-								},
-							},
-						},
-						Properties: &[]cdx.Property{
-							{
-								Name:  "aquasecurity:trivy:FilePath",
-								Value: "usr/local/lib/ruby/gems/3.1.0/gems/typeprof-0.21.1/vscode/package.json",
-							},
-							{
-								Name:  "aquasecurity:trivy:LayerDiffID",
-								Value: "sha256:661c3fd3cc16b34c070f3620ca6b03b6adac150f9a7e5d0e3c707a159990f88e",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgID",
-								Value: "ruby-typeprof@0.20.1",
-							},
-							{
-								Name:  "aquasecurity:trivy:PkgType",
-								Value: "node-pkg",
-							},
-						},
-					},
-				},
-				Vulnerabilities: &[]cdx.Vulnerability{},
-				Dependencies: &[]cdx.Dependency{
-					{
-						Ref: "3ff14136-e09f-4df9-80ea-000000000002",
-						Dependencies: &[]string{
-							"pkg:npm/ruby-typeprof@0.20.1?file_path=usr%2Flocal%2Flib%2Fruby%2Fgems%2F3.1.0%2Fgems%2Ftypeprof-0.21.1%2Fvscode%2Fpackage.json",
-						},
-					},
-					{
-						Ref:          "pkg:npm/ruby-typeprof@0.20.1?file_path=usr%2Flocal%2Flib%2Fruby%2Fgems%2F3.1.0%2Fgems%2Ftypeprof-0.21.1%2Fvscode%2Fpackage.json",
-						Dependencies: lo.ToPtr([]string{}),
 					},
 				},
 			},

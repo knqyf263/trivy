@@ -48,7 +48,7 @@ func ConvertResults(results scan.Results, provider string, scoped []string) map[
 			arnResult := types.Result{
 				Target: arn,
 				Class:  types.ClassConfig,
-				Type:   ftypes.Cloud,
+				Source: ftypes.Cloud,
 			}
 
 			for _, result := range serviceResults {

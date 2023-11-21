@@ -19,7 +19,7 @@ func TestResults_Failed(t *testing.T) {
 			results: types.Results{
 				{
 					Target: "test",
-					Type:   "test",
+					Source: "test",
 				},
 			},
 			want: false,
@@ -29,7 +29,7 @@ func TestResults_Failed(t *testing.T) {
 			results: types.Results{
 				{
 					Target: "test",
-					Type:   "test",
+					Source: "test",
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID: "CVE-2021-0001",
@@ -45,7 +45,7 @@ func TestResults_Failed(t *testing.T) {
 			results: types.Results{
 				{
 					Target: "test",
-					Type:   "test",
+					Source: "test",
 					Misconfigurations: []types.DetectedMisconfiguration{
 						{
 							Type:   "Docker Security Check",
@@ -62,7 +62,7 @@ func TestResults_Failed(t *testing.T) {
 			results: types.Results{
 				{
 					Target: "test",
-					Type:   "test",
+					Source: "test",
 					Misconfigurations: []types.DetectedMisconfiguration{
 						{
 							Type:   "Docker Security Check",

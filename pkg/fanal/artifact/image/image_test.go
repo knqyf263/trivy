@@ -698,7 +698,8 @@ func TestArtifact_Inspect(t *testing.T) {
 							CreatedBy:     "COPY file:842584685f26edb24dc305d76894f51cfda2bad0c24a05e727f9d4905d184a70 in /php-app/composer.lock ",
 							Applications: []types.Application{
 								{
-									Type:     "composer",
+									SrcType:  types.Composer,
+									PkgType:  types.PkgTypeComposer,
 									FilePath: "php-app/composer.lock",
 									Libraries: types.Packages{
 										{
@@ -906,7 +907,8 @@ func TestArtifact_Inspect(t *testing.T) {
 							CreatedBy:     "COPY file:c6d0373d380252b91829a5bb3c81d5b1afa574c91cef7752d18170a231c31f6d in /ruby-app/Gemfile.lock ",
 							Applications: []types.Application{
 								{
-									Type:     "bundler",
+									SrcType:  types.Bundler,
+									PkgType:  types.PkgTypeGem,
 									FilePath: "ruby-app/Gemfile.lock",
 									Libraries: types.Packages{
 										{

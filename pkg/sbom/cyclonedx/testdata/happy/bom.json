@@ -84,6 +84,21 @@
       ]
     },
     {
+      "bom-ref": "870dc6f7-2838-42bf-8a3d-59c6077879f7",
+      "type": "application",
+      "name": "Java",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "jar"
+        },
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "lang-pkgs"
+        }
+      ]
+    },
+    {
       "bom-ref": "pkg:maven/org.codehaus.mojo/child-project@1.0?file_path=app%2Fmaven%2Ftarget%2Fchild-project-1.0.jar",
       "type": "library",
       "name": "child-project",
@@ -101,7 +116,7 @@
         },
         {
           "name": "aquasecurity:trivy:Type",
-          "value": "jar"
+          "value": "maven"
         }
       ]
     },
@@ -115,6 +130,21 @@
         {
           "name": "aquasecurity:trivy:LayerDiffID",
           "value": "sha256:3c79e832b1b4891a1cb4a326ef8524e0bd14a2537150ac0e203a5677176c1ca1"
+        }
+      ]
+    },
+    {
+      "bom-ref": "e9e8872f-9de7-46f0-ac66-549ed1ed722d",
+      "type": "application",
+      "name": "Node.js",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "node-pkg"
+        },
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "lang-pkgs"
         }
       ]
     },
@@ -256,12 +286,23 @@
       ]
     },
     {
+      "ref": "870dc6f7-2838-42bf-8a3d-59c6077879f7",
+      "dependsOn": [
+        "pkg:maven/org.codehaus.mojo/child-project@1.0?file_path=app%2Fmaven%2Ftarget%2Fchild-project-1.0.jar"
+      ]
+    },
+    {
+      "ref": "e9e8872f-9de7-46f0-ac66-549ed1ed722d",
+      "dependsOn": [
+        "pkg:npm/bootstrap@5.0.2?file_path=app%2Fapp%2Fpackage.json"
+      ]
+    },
+    {
       "ref": "0f585d64-4815-4b72-92c5-97dae191fa4a",
       "dependsOn": [
         "60e9f57b-d4a6-4f71-ad14-0893ac609182",
-        "pkg:maven/org.codehaus.mojo/child-project@1.0?file_path=app%2Fmaven%2Ftarget%2Fchild-project-1.0.jar",
-        "pkg:maven/com.example/example@0.0.1",
-        "pkg:npm/bootstrap@5.0.2?file_path=app%2Fapp%2Fpackage.json",
+        "870dc6f7-2838-42bf-8a3d-59c6077879f7",
+        "e9e8872f-9de7-46f0-ac66-549ed1ed722d",
         "100925ff-7c0a-470f-a725-8fb973b40e7b",
         "1a111e6b-a682-470e-8b0e-aaa49d93cd39"
       ]

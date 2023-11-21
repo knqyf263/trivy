@@ -23,7 +23,7 @@ func TestDriver_Detect(t *testing.T) {
 	tests := []struct {
 		name     string
 		fixtures []string
-		libType  ftypes.LangType
+		pkgType  ftypes.PkgType
 		args     args
 		want     []types.DetectedVulnerability
 		wantErr  string
@@ -34,7 +34,7 @@ func TestDriver_Detect(t *testing.T) {
 				"testdata/fixtures/php.yaml",
 				"testdata/fixtures/data-source.yaml",
 			},
-			libType: ftypes.Composer,
+			pkgType: ftypes.PkgTypeComposer,
 			args: args{
 				pkgName: "symfony/symfony",
 				pkgVer:  "4.2.6",
@@ -59,7 +59,7 @@ func TestDriver_Detect(t *testing.T) {
 				"testdata/fixtures/go.yaml",
 				"testdata/fixtures/data-source.yaml",
 			},
-			libType: ftypes.GoModule,
+			pkgType: ftypes.PkgTypeGolang,
 			args: args{
 				pkgName: "github.com/Masterminds/vcs",
 				pkgVer:  "v1.13.1",
@@ -81,7 +81,7 @@ func TestDriver_Detect(t *testing.T) {
 		{
 			name:     "non-prefixed buckets",
 			fixtures: []string{"testdata/fixtures/php-without-prefix.yaml"},
-			libType:  ftypes.Composer,
+			pkgType:  ftypes.PkgTypeComposer,
 			args: args{
 				pkgName: "symfony/symfony",
 				pkgVer:  "4.2.6",
@@ -94,7 +94,7 @@ func TestDriver_Detect(t *testing.T) {
 				"testdata/fixtures/php.yaml",
 				"testdata/fixtures/data-source.yaml",
 			},
-			libType: ftypes.Composer,
+			pkgType: ftypes.PkgTypeComposer,
 			args: args{
 				pkgName: "symfony/symfony",
 				pkgVer:  "4.4.6",
@@ -119,7 +119,7 @@ func TestDriver_Detect(t *testing.T) {
 				"testdata/fixtures/ruby.yaml",
 				"testdata/fixtures/data-source.yaml",
 			},
-			libType: ftypes.Bundler,
+			pkgType: ftypes.PkgTypeGem,
 			args: args{
 				pkgName: "activesupport",
 				pkgVer:  "4.1.1",
@@ -141,7 +141,7 @@ func TestDriver_Detect(t *testing.T) {
 		{
 			name:     "no vulnerability",
 			fixtures: []string{"testdata/fixtures/php.yaml"},
-			libType:  ftypes.Composer,
+			pkgType:  ftypes.PkgTypeComposer,
 			args: args{
 				pkgName: "symfony/symfony",
 				pkgVer:  "4.4.7",
@@ -150,7 +150,7 @@ func TestDriver_Detect(t *testing.T) {
 		{
 			name:     "malformed JSON",
 			fixtures: []string{"testdata/fixtures/invalid-type.yaml"},
-			libType:  ftypes.Composer,
+			pkgType:  ftypes.PkgTypeComposer,
 			args: args{
 				pkgName: "symfony/symfony",
 				pkgVer:  "5.1.5",
@@ -164,7 +164,7 @@ func TestDriver_Detect(t *testing.T) {
 			_ = dbtest.InitDB(t, tt.fixtures)
 			defer db.Close()
 
-			driver, ok := library.NewDriver(tt.libType)
+			driver, ok := library.NewDriver(tt.pkgType)
 			require.True(t, ok)
 
 			got, err := driver.DetectVulnerabilities("", tt.args.pkgName, tt.args.pkgVer)

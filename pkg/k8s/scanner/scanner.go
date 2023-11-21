@@ -247,7 +247,7 @@ func (s *Scanner) scanK8sVulns(ctx context.Context, artifactsData []*artifacts.A
 			results, _, err := k8sScanner.Scan(ctx, types.ScanTarget{
 				Applications: []ftypes.Application{
 					{
-						Type:     ftypes.LangType(lang),
+						SrcType:  ftypes.LangType(lang),
 						FilePath: artifact.Name,
 						Libraries: []ftypes.Package{
 							{
@@ -276,7 +276,7 @@ func (s *Scanner) scanK8sVulns(ctx context.Context, artifactsData []*artifacts.A
 			results, _, err := k8sScanner.Scan(ctx, types.ScanTarget{
 				Applications: []ftypes.Application{
 					{
-						Type:     ftypes.LangType(lang),
+						SrcType:  ftypes.LangType(lang),
 						FilePath: artifact.Name,
 						Libraries: []ftypes.Package{
 							{
@@ -286,7 +286,7 @@ func (s *Scanner) scanK8sVulns(ctx context.Context, artifactsData []*artifacts.A
 						},
 					},
 					{
-						Type:     ftypes.GoBinary,
+						SrcType:  ftypes.GoBinary,
 						FilePath: artifact.Name,
 						Libraries: []ftypes.Package{
 							{
@@ -314,7 +314,7 @@ func (s *Scanner) scanK8sVulns(ctx context.Context, artifactsData []*artifacts.A
 			results, _, err := k8sScanner.Scan(ctx, types.ScanTarget{
 				Applications: []ftypes.Application{
 					{
-						Type:     ftypes.LangType(lang),
+						SrcType:  ftypes.LangType(lang),
 						FilePath: artifact.Name,
 						Libraries: []ftypes.Package{
 							{
@@ -373,11 +373,11 @@ func clusterInfoToReportResources(allArtifact []*artifacts.Artifact) (*core.Comp
 				}
 				ver := sanitizedVersion(c.Version)
 
-				imagePURL, err := purl.NewPackageURL(purl.TypeOCI, types.Metadata{
+				imagePURL, err := purl.NewPackageURL(types.Metadata{
 					RepoDigests: []string{
 						fmt.Sprintf("%s@%s", name, cDigest),
 					},
-				}, ftypes.Package{})
+				}, purl.Package{Type: ftypes.PkgTypeOCI})
 
 				if err != nil {
 					return nil, xerrors.Errorf("failed to create PURL: %w", err)
@@ -503,7 +503,7 @@ func nodeComponent(nf bom.NodeInfo) *core.Component {
 						Value: string(types.ClassOSPkg),
 					},
 					{
-						Name:  "Type",
+						Name:  "SrcType",
 						Value: osName,
 					},
 				},
@@ -517,7 +517,7 @@ func nodeComponent(nf bom.NodeInfo) *core.Component {
 						Value: string(types.ClassLangPkg),
 					},
 					{
-						Name:  "Type",
+						Name:  "SrcType",
 						Value: golang,
 					},
 				},

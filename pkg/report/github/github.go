@@ -101,7 +101,7 @@ func (w Writer) Write(report types.Report) error {
 		}
 
 		manifest := Manifest{}
-		manifest.Name = string(result.Type)
+		manifest.Name = string(result.Source)
 		// show path for language-specific packages only
 		if result.Class == types.ClassLangPkg {
 			manifest.File = &File{
@@ -117,7 +117,10 @@ func (w Writer) Write(report types.Report) error {
 			githubPkg.Scope = RuntimeScope
 			githubPkg.Relationship = getPkgRelationshipType(pkg)
 			githubPkg.Dependencies = pkg.DependsOn // TODO: replace with PURL
-			githubPkg.PackageUrl, err = buildPurl(result.Type, pkg)
+			githubPkg.PackageUrl, err = buildPurl(purl.Package{
+				Type:    result.PkgType,
+				Package: pkg,
+			})
 			if err != nil {
 				return xerrors.Errorf("unable to build purl for %s: %w", pkg.Name, err)
 			}
@@ -160,8 +163,8 @@ func getPkgRelationshipType(pkg ftypes.Package) string {
 	return DirectRelationship
 }
 
-func buildPurl(t ftypes.TargetType, pkg ftypes.Package) (string, error) {
-	packageUrl, err := purl.NewPackageURL(t, types.Metadata{}, pkg)
+func buildPurl(pkg purl.Package) (string, error) {
+	packageUrl, err := purl.NewPackageURL(types.Metadata{}, pkg)
 	if err != nil {
 		return "", xerrors.Errorf("purl error: %w", err)
 	}

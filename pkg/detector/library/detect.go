@@ -8,8 +8,8 @@ import (
 )
 
 // Detect scans and returns vulnerabilities of library
-func Detect(libType ftypes.LangType, pkgs []ftypes.Package) ([]types.DetectedVulnerability, error) {
-	driver, ok := NewDriver(libType)
+func Detect(pkgType ftypes.PkgType, pkgs []ftypes.Package) ([]types.DetectedVulnerability, error) {
+	driver, ok := NewDriver(pkgType)
 	if !ok {
 		return nil, nil
 	}

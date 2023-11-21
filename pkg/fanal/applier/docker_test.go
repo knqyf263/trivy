@@ -41,7 +41,8 @@ func TestApplyLayers(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type:     types.Bundler,
+							SrcType:  types.Bundler,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "app/Gemfile.lock",
 							Libraries: types.Packages{
 								{
@@ -51,7 +52,8 @@ func TestApplyLayers(t *testing.T) {
 							},
 						},
 						{
-							Type:     types.Composer,
+							SrcType:  types.Composer,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "app/composer.lock",
 							Libraries: types.Packages{
 								{
@@ -61,7 +63,8 @@ func TestApplyLayers(t *testing.T) {
 							},
 						},
 						{
-							Type:     types.GemSpec,
+							SrcType:  types.GemSpec,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "usr/local/bundle/specifications/gon-6.3.2.gemspec",
 							Libraries: types.Packages{
 								{
@@ -120,7 +123,8 @@ func TestApplyLayers(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type:     types.GemSpec,
+							SrcType:  types.GemSpec,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "var/lib/gems/2.5.0/specifications/activesupport-6.0.2.1.gemspec",
 							Libraries: types.Packages{
 								{
@@ -160,7 +164,8 @@ func TestApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type: types.GemSpec,
+						SrcType: types.GemSpec,
+						PkgType: types.PkgTypeGem,
 						Libraries: types.Packages{
 							{
 								Name:     "activesupport",
@@ -183,7 +188,8 @@ func TestApplyLayers(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.Bundler,
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "app/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -229,7 +235,8 @@ func TestApplyLayers(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type: types.PythonPkg,
+							SrcType: types.PythonPkg,
+							PkgType: types.PkgTypePyPI,
 							Libraries: types.Packages{
 								{
 									Name:    "pip",
@@ -266,7 +273,8 @@ func TestApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type: types.PythonPkg,
+						SrcType: types.PythonPkg,
+						PkgType: types.PkgTypePyPI,
 						Libraries: types.Packages{
 							{
 								Name:     "pip",
@@ -324,7 +332,8 @@ func TestApplyLayers(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type:     types.Bundler,
+							SrcType:  types.Bundler,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "app/Gemfile.lock",
 							Libraries: types.Packages{
 								{
@@ -338,7 +347,8 @@ func TestApplyLayers(t *testing.T) {
 							},
 						},
 						{
-							Type:     types.Composer,
+							SrcType:  types.Composer,
+							PkgType:  types.PkgTypeComposer,
 							FilePath: "app/composer.lock",
 							Libraries: types.Packages{
 								{
@@ -348,7 +358,8 @@ func TestApplyLayers(t *testing.T) {
 							},
 						},
 						{
-							Type:     types.GemSpec,
+							SrcType:  types.GemSpec,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "var/lib/gems/2.5.0/specifications/activesupport-6.0.2.1.gemspec",
 							Libraries: types.Packages{
 								{
@@ -366,7 +377,8 @@ func TestApplyLayers(t *testing.T) {
 					DiffID:        "sha256:aad63a9339440e7c3e1fff2b988991b9bfb81280042fa7f39a5e327023056819",
 					Applications: []types.Application{
 						{
-							Type:     types.Bundler,
+							SrcType:  types.Bundler,
+							PkgType:  types.PkgTypeGem,
 							FilePath: "app/Gemfile.lock",
 							Libraries: types.Packages{
 								{
@@ -380,7 +392,8 @@ func TestApplyLayers(t *testing.T) {
 							},
 						},
 						{
-							Type:     "composer",
+							SrcType:  types.Composer,
+							PkgType:  types.PkgTypeComposer,
 							FilePath: "app/composer2.lock",
 							Libraries: types.Packages{
 								{
@@ -403,7 +416,8 @@ func TestApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     types.Bundler,
+						SrcType:  types.Bundler,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "app/Gemfile.lock",
 						Libraries: types.Packages{
 							{
@@ -425,7 +439,8 @@ func TestApplyLayers(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.Composer,
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "app/composer2.lock",
 						Libraries: types.Packages{
 							{
@@ -630,7 +645,8 @@ func TestApplyLayers(t *testing.T) {
 					},
 					Applications: []types.Application{
 						{
-							Type:     "composer",
+							SrcType:  types.Composer,
+							PkgType:  types.PkgTypeComposer,
 							FilePath: "app/composer.lock",
 							Libraries: types.Packages{
 								{
@@ -718,7 +734,8 @@ func TestApplyLayers(t *testing.T) {
 					DiffID:        "sha256:aad63a9339440e7c3e1fff2b988991b9bfb81280042fa7f39a5e327023056819",
 					Applications: []types.Application{
 						{
-							Type:     "composer",
+							SrcType:  types.Composer,
+							PkgType:  types.PkgTypeComposer,
 							FilePath: "app/composer.lock",
 							Libraries: types.Packages{
 								{

@@ -59,7 +59,7 @@
         },
         {
           "name": "aquasecurity:trivy:Type",
-          "value": "golang"
+          "value": "gobinary"
         }
       ]
     },

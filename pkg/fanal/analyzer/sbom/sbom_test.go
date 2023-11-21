@@ -27,7 +27,8 @@ func Test_sbomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type: types.Jar,
+						SrcType: types.JAR,
+						PkgType: types.PkgTypeMaven,
 						Libraries: types.Packages{
 							{
 								Name:     "co.elastic.apm:apm-agent",
@@ -56,7 +57,8 @@ func Test_sbomAnalyzer_Analyze(t *testing.T) {
 						},
 					},
 					{
-						Type:     types.Bitnami,
+						SrcType:  types.SBOM,
+						PkgType:  types.PkgTypeBitnami,
 						FilePath: "opt/bitnami/elasticsearch",
 						Libraries: types.Packages{
 							{
@@ -79,7 +81,8 @@ func Test_sbomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type: types.Jar,
+						SrcType: types.JAR,
+						PkgType: types.PkgTypeMaven,
 						Libraries: types.Packages{
 							{
 								FilePath: "opt/bitnami/elasticsearch/modules/apm/elastic-apm-agent-1.36.0.jar",
@@ -106,7 +109,8 @@ func Test_sbomAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Bitnami,
+						SrcType:  types.SBOM,
+						PkgType:  types.PkgTypeBitnami,
 						FilePath: "opt/bitnami/postgresql",
 						Libraries: types.Packages{
 							{

@@ -24,7 +24,8 @@ func Test_poetryLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Poetry,
+						SrcType:  types.Poetry,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "poetry.lock",
 						Libraries: types.Packages{
 							{
@@ -117,7 +118,8 @@ func Test_poetryLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Poetry,
+						SrcType:  types.Poetry,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "poetry.lock",
 						Libraries: types.Packages{
 							{
@@ -144,7 +146,8 @@ func Test_poetryLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Poetry,
+						SrcType:  types.Poetry,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "poetry.lock",
 						Libraries: types.Packages{
 							{

@@ -30,7 +30,8 @@ func Test_pubSpecLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pub,
+						SrcType:  types.Pub,
+						PkgType:  types.PkgTypePub,
 						FilePath: "pubspec.lock",
 						Libraries: types.Packages{
 							{
@@ -74,7 +75,8 @@ func Test_pubSpecLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pub,
+						SrcType:  types.Pub,
+						PkgType:  types.PkgTypePub,
 						FilePath: "pubspec.lock",
 						Libraries: types.Packages{
 							{

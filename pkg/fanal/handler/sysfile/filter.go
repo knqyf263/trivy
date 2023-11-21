@@ -68,7 +68,7 @@ func (h systemFileFilteringPostHandler) Handle(_ context.Context, result *analyz
 	for _, app := range blob.Applications {
 		// If the lang-specific package was installed by OS package manager, it should not be taken.
 		// Otherwise, the package version will be wrong, then it will lead to false positive.
-		if slices.Contains(systemFiles, app.FilePath) && slices.Contains(affectedTypes, app.Type) {
+		if slices.Contains(systemFiles, app.FilePath) && slices.Contains(affectedTypes, app.SrcType) {
 			continue
 		}
 

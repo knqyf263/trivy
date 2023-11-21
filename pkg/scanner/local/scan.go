@@ -199,7 +199,7 @@ func (s Scanner) fillPkgsInVulns(pkgResults, vulnResults types.Results) types.Re
 	}
 	for _, result := range pkgResults {
 		if r, found := lo.Find(vulnResults, func(r types.Result) bool {
-			return r.Class == result.Class && r.Target == result.Target && r.Type == result.Type
+			return r.Class == result.Class && r.Target == result.Target && r.Source == result.Source
 		}); found {
 			r.Packages = result.Packages
 			results = append(results, r)
@@ -243,7 +243,7 @@ func (s Scanner) MisconfsToResults(misconfs []ftypes.Misconfiguration) types.Res
 		results = append(results, types.Result{
 			Target:            misconf.FilePath,
 			Class:             types.ClassConfig,
-			Type:              misconf.FileType,
+			Source:            misconf.FileType,
 			Misconfigurations: detected,
 		})
 	}
@@ -319,7 +319,7 @@ func (s Scanner) scanLicenses(target types.ScanTarget, options types.ScanOptions
 		}
 
 		targetName := app.FilePath
-		if t, ok := langpkg.PkgTargets[app.Type]; ok && targetName == "" {
+		if t, ok := langpkg.PkgSources[app.SrcType]; ok && targetName == "" {
 			// When the file path is empty, we will overwrite it with the pre-defined value.
 			targetName = t
 		}

@@ -88,7 +88,7 @@ func TestScanServer_Scan(t *testing.T) {
 									},
 								},
 							},
-							Type: "alpine",
+							Source: "alpine",
 						},
 					},
 					OsFound: ftypes.OS{
@@ -442,7 +442,7 @@ func TestCacheServer_PutBlob(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "composer",
+								SrcType:  ftypes.Composer,
 								FilePath: "php-app/composer.lock",
 								Libraries: ftypes.Packages{
 									{

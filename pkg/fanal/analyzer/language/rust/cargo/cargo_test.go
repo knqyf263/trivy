@@ -25,7 +25,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "Cargo.lock",
 						Libraries: types.Packages{
 							{
@@ -143,7 +144,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "Cargo.lock",
 						Libraries: types.Packages{
 							{
@@ -169,7 +171,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "Cargo.lock",
 						Libraries: types.Packages{
 							{
@@ -344,7 +347,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Cargo,
+						SrcType:  types.Cargo,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "Cargo.lock",
 						Libraries: types.Packages{
 							{

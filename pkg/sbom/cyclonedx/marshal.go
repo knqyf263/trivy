@@ -19,8 +19,12 @@ import (
 
 const (
 	PropertySchemaVersion = "SchemaVersion"
-	PropertyType          = "Type"
+	PropertySource        = "Source"
 	PropertyClass         = "Class"
+
+	// Deprecated: it was renamed to "Source".
+	// Keep it for backward compatibility
+	PropertyType = "Type"
 
 	// Image properties
 	PropertySize       = "Size"
@@ -42,9 +46,7 @@ const (
 	PropertyLayerDiffID     = "LayerDiffID"
 )
 
-var (
-	ErrInvalidBOMLink = xerrors.New("invalid bomLink format error")
-)
+var ErrInvalidBOMLink = xerrors.New("invalid bomLink format error")
 
 type Marshaler struct {
 	core *core.CycloneDX
@@ -85,57 +87,51 @@ func (e *Marshaler) MarshalReport(r types.Report) (*core.Component, error) {
 }
 
 func (e *Marshaler) marshalResult(metadata types.Metadata, result types.Result) ([]*core.Component, error) {
-	if result.Type == ftypes.NodePkg || result.Type == ftypes.PythonPkg ||
-		result.Type == ftypes.GemSpec || result.Type == ftypes.Jar || result.Type == ftypes.CondaPkg {
-		// If a package is language-specific package that isn't associated with a lock file,
-		// it will be a dependency of a component under "metadata".
-		// e.g.
-		//   Container component (alpine:3.15) ----------------------- #1
-		//     -> Library component (npm package, express-4.17.3) ---- #2
-		//     -> Library component (python package, django-4.0.2) --- #2
-		//     -> etc.
-		// ref. https://cyclonedx.org/use-cases/#inventory
-
-		// Dependency graph from #1 to #2
-		components, err := e.marshalPackages(metadata, result)
-		if err != nil {
-			return nil, err
-		}
-		return components, nil
-	} else if result.Class == types.ClassOSPkg || result.Class == types.ClassLangPkg {
-		// If a package is OS package, it will be a dependency of "Operating System" component.
-		// e.g.
-		//   Container component (alpine:3.15) --------------------- #1
-		//     -> Operating System Component (Alpine Linux 3.15) --- #2
-		//       -> Library component (bash-4.12) ------------------ #3
-		//       -> Library component (vim-8.2)   ------------------ #3
-		//       -> etc.
-		//
-		// Else if a package is language-specific package associated with a lock file,
-		// it will be a dependency of "Application" component.
-		// e.g.
-		//   Container component (alpine:3.15) ------------------------ #1
-		//     -> Application component (/app/package-lock.json) ------ #2
-		//       -> Library component (npm package, express-4.17.3) --- #3
-		//       -> Library component (npm package, lodash-4.17.21) --- #3
-		//       -> etc.
-
-		// #2
-		appComponent := e.resultComponent(result, metadata.OS)
-
-		// #3
-		components, err := e.marshalPackages(metadata, result)
-		if err != nil {
-			return nil, err
-		}
-
-		// Dependency graph from #2 to #3
-		appComponent.Components = components
-
-		// Dependency graph from #1 to #2
-		return []*core.Component{appComponent}, nil
+	if result.Class != types.ClassOSPkg && result.Class != types.ClassLangPkg {
+		return nil, nil
 	}
-	return nil, nil
+
+	// If a package is OS package, it will be a dependency of "Operating System" component.
+	// e.g.
+	//   "Container" component (alpine:3.15) --------------------- #1
+	//     -> "Operating System" Component (Alpine Linux 3.15) --- #2
+	//       -> "Library" component (bash-4.12) ------------------ #3
+	//       -> "Library" component (vim-8.2)   ------------------ #3
+	//       -> etc.
+	//
+	// Else if a package is language-specific package associated with a lock file,
+	// it will be a dependency of "Application" component.
+	// e.g.
+	//   Container component (alpine:3.15) ------------------------ #1
+	//     -> "Application" component (/app/package-lock.json) ------ #2
+	//       -> Library component (npm package, express-4.17.3) --- #3
+	//       -> Library component (npm package, lodash-4.17.21) --- #3
+	//       -> etc.
+	//
+	// Else if a package is language-specific package that isn't associated with a lock file,
+	// it will be a dependency of a pseudo "Application" component.
+	// e.g.
+	//   "Container" component (alpine:3.15) ----------------------------------- #1
+	//     -> "Application" pseudo component (jar) ----------------------------- #2
+	//       -> "Library" component (maven package, jackson-databind-2.16.0) --- #3
+	//       -> "Library" component (maven package, gson-2.10.1) --------------- #3
+	//       -> etc.
+	// ref. https://cyclonedx.org/use-cases/#inventory
+
+	// #2
+	appComponent := e.resultComponent(result, metadata.OS)
+
+	// #3
+	components, err := e.marshalPackages(metadata, result)
+	if err != nil {
+		return nil, err
+	}
+
+	// Dependency graph from #2 to #3
+	appComponent.Components = components
+
+	// Dependency graph from #1 to #2
+	return []*core.Component{appComponent}, nil
 }
 
 func (e *Marshaler) marshalPackages(metadata types.Metadata, result types.Result) ([]*core.Component, error) {
@@ -148,12 +144,12 @@ func (e *Marshaler) marshalPackages(metadata types.Metadata, result types.Result
 	})
 
 	// Create package map
-	pkgs := lo.SliceToMap(result.Packages, func(pkg ftypes.Package) (string, Package) {
+	pkgs := lo.SliceToMap(result.Packages, func(pkg ftypes.Package) (string, purl.Package) {
 		pkgID := lo.Ternary(pkg.ID == "", fmt.Sprintf("%s@%s", pkg.Name, utils.FormatVersion(pkg)), pkg.ID)
-		return pkgID, Package{
-			Type:            result.Type,
-			Metadata:        metadata,
+		return pkgID, purl.Package{
 			Package:         pkg,
+			Type:            result.PkgType,
+			Metadata:        metadata,
 			Vulnerabilities: vulns[pkgID],
 		}
 	})
@@ -176,15 +172,8 @@ func (e *Marshaler) marshalPackages(metadata types.Metadata, result types.Result
 	return directComponents, nil
 }
 
-type Package struct {
-	ftypes.Package
-	Type            ftypes.TargetType
-	Metadata        types.Metadata
-	Vulnerabilities []types.DetectedVulnerability
-}
-
-func (e *Marshaler) marshalPackage(pkg Package, pkgs map[string]Package, components map[string]*core.Component,
-) (*core.Component, error) {
+func (e *Marshaler) marshalPackage(pkg purl.Package, pkgs map[string]purl.Package,
+	components map[string]*core.Component) (*core.Component, error) {
 	if c, ok := components[pkg.ID]; ok {
 		return c, nil
 	}
@@ -236,7 +225,7 @@ func (e *Marshaler) rootComponent(r types.Report) (*core.Component, error) {
 			Value: r.Metadata.ImageID,
 		})
 
-		p, err := purl.NewPackageURL(purl.TypeOCI, r.Metadata, ftypes.Package{})
+		p, err := purl.NewPackageURL(r.Metadata, purl.Package{Type: ftypes.PkgTypeOCI})
 		if err != nil {
 			return nil, xerrors.Errorf("failed to new package url for oci: %w", err)
 		}
@@ -286,12 +275,16 @@ func (e *Marshaler) resultComponent(r types.Result, osFound *ftypes.OS) *core.Co
 		Name: r.Target,
 		Properties: []core.Property{
 			{
-				Name:  PropertyType,
-				Value: string(r.Type),
+				Name:  PropertySource,
+				Value: string(r.Source),
 			},
 			{
 				Name:  PropertyClass,
 				Value: string(r.Class),
+			},
+			{
+				Name:  PropertyPkgType,
+				Value: string(r.PkgType),
 			},
 		},
 	}
@@ -314,8 +307,8 @@ func (e *Marshaler) resultComponent(r types.Result, osFound *ftypes.OS) *core.Co
 	return component
 }
 
-func pkgComponent(pkg Package) (*core.Component, error) {
-	pu, err := purl.NewPackageURL(pkg.Type, pkg.Metadata, pkg.Package)
+func pkgComponent(pkg purl.Package) (*core.Component, error) {
+	pu, err := purl.NewPackageURL(pkg.Metadata, pkg)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to new package purl: %w", err)
 	}
@@ -328,7 +321,7 @@ func pkgComponent(pkg Package) (*core.Component, error) {
 	if pu != nil {
 		version = pu.Version
 		// use `group` field for GroupID and `name` for ArtifactID for jar files
-		if pkg.Type == ftypes.Jar {
+		if pkg.Type == ftypes.PkgTypeMaven {
 			name = pu.Name
 			group = pu.Namespace
 		}
@@ -338,10 +331,6 @@ func pkgComponent(pkg Package) (*core.Component, error) {
 		{
 			Name:  PropertyPkgID,
 			Value: pkg.ID,
-		},
-		{
-			Name:  PropertyPkgType,
-			Value: string(pkg.Type),
 		},
 		{
 			Name:  PropertyFilePath,

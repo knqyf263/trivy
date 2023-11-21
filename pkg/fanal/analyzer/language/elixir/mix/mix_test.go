@@ -23,7 +23,8 @@ func Test_mixLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Hex,
+						SrcType:  types.Hex,
+						PkgType:  types.PkgTypeHex,
 						FilePath: "testdata/happy.mix.lock",
 						Libraries: types.Packages{
 							{

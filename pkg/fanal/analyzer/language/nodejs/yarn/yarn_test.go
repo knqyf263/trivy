@@ -24,7 +24,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: types.Packages{
 							{
@@ -133,7 +134,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: types.Packages{
 							{
@@ -236,7 +238,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: types.Packages{
 							{
@@ -272,7 +275,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: []types.Package{
 							{
@@ -324,7 +328,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: types.Packages{
 							{
@@ -480,7 +485,8 @@ func Test_yarnLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Yarn,
+						SrcType:  types.Yarn,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "yarn.lock",
 						Libraries: []types.Package{
 							{

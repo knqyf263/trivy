@@ -33,7 +33,8 @@ func Test_javaLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Jar,
+						SrcType:  types.JAR,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/test.war",
 						Libraries: types.Packages{
 							{
@@ -88,7 +89,8 @@ func Test_javaLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Jar,
+						SrcType:  types.JAR,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/test.par",
 						Libraries: types.Packages{
 							{
@@ -108,7 +110,8 @@ func Test_javaLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Jar,
+						SrcType:  types.JAR,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/test.jar",
 						Libraries: types.Packages{
 							{

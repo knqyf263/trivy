@@ -28,8 +28,8 @@ const (
 	TypeApk         Type = "apk"
 	TypeDpkg        Type = "dpkg"
 	TypeDpkgLicense Type = "dpkg-license" // For analyzing licenses
-	TypeRpm         Type = "rpm"
-	TypeRpmqa       Type = "rpmqa"
+	TypeRPM         Type = "rpm"
+	TypeRPMqa       Type = "rpmqa"
 
 	// OS Package Repository
 	TypeApkRepo Type = "apk-repo"
@@ -151,8 +151,8 @@ var (
 		TypeApk,
 		TypeDpkg,
 		TypeDpkgLicense,
-		TypeRpm,
-		TypeRpmqa,
+		TypeRPM,
+		TypeRPMqa,
 		TypeApkRepo,
 	}
 

@@ -26,7 +26,8 @@ func Test_rustBinaryLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.RustBinary,
+						SrcType:  types.RustBinary,
+						PkgType:  types.PkgTypeCargo,
 						FilePath: "testdata/executable_rust",
 						Libraries: types.Packages{
 							{

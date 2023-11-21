@@ -17,18 +17,19 @@ import (
 func TestNewPackageURL(t *testing.T) {
 	testCases := []struct {
 		name     string
-		typ      ftypes.TargetType
-		pkg      ftypes.Package
+		pkg      purl.Package
 		metadata types.Metadata
 		want     *purl.PackageURL
 		wantErr  string
 	}{
 		{
 			name: "maven package",
-			typ:  ftypes.Jar,
-			pkg: ftypes.Package{
-				Name:    "org.springframework:spring-core",
-				Version: "5.3.14",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeMaven,
+				Package: ftypes.Package{
+					Name:    "org.springframework:spring-core",
+					Version: "5.3.14",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -41,10 +42,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "gradle package",
-			typ:  ftypes.Gradle,
-			pkg: ftypes.Package{
-				Name:    "org.springframework:spring-core",
-				Version: "5.3.14",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeMaven,
+				Package: ftypes.Package{
+					Name:    "org.springframework:spring-core",
+					Version: "5.3.14",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -57,10 +60,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "yarn package",
-			typ:  ftypes.Yarn,
-			pkg: ftypes.Package{
-				Name:    "@xtuc/ieee754",
-				Version: "1.2.0",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeNPM,
+				Package: ftypes.Package{
+					Name:    "@xtuc/ieee754",
+					Version: "1.2.0",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -73,10 +78,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "yarn package with non-namespace",
-			typ:  ftypes.Yarn,
-			pkg: ftypes.Package{
-				Name:    "lodash",
-				Version: "4.17.21",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeNPM,
+				Package: ftypes.Package{
+					Name:    "lodash",
+					Version: "4.17.21",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -88,10 +95,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "pnpm package",
-			typ:  ftypes.Pnpm,
-			pkg: ftypes.Package{
-				Name:    "@xtuc/ieee754",
-				Version: "1.2.0",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeNPM,
+				Package: ftypes.Package{
+					Name:    "@xtuc/ieee754",
+					Version: "1.2.0",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -104,10 +113,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "pnpm package with non-namespace",
-			typ:  ftypes.Pnpm,
-			pkg: ftypes.Package{
-				Name:    "lodash",
-				Version: "4.17.21",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeNPM,
+				Package: ftypes.Package{
+					Name:    "lodash",
+					Version: "4.17.21",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -119,10 +130,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "pypi package",
-			typ:  ftypes.PythonPkg,
-			pkg: ftypes.Package{
-				Name:    "Django_test",
-				Version: "1.2.0",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypePyPI,
+				Package: ftypes.Package{
+					Name:    "Django_test",
+					Version: "1.2.0",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -134,10 +147,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "conda package",
-			typ:  ftypes.CondaPkg,
-			pkg: ftypes.Package{
-				Name:    "absl-py",
-				Version: "0.4.1",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeConda,
+				Package: ftypes.Package{
+					Name:    "absl-py",
+					Version: "0.4.1",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -149,10 +164,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "composer package",
-			typ:  ftypes.Composer,
-			pkg: ftypes.Package{
-				Name:    "symfony/contracts",
-				Version: "v1.0.2",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeComposer,
+				Package: ftypes.Package{
+					Name:    "symfony/contracts",
+					Version: "v1.0.2",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -165,10 +182,12 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "golang package",
-			typ:  ftypes.GoModule,
-			pkg: ftypes.Package{
-				Name:    "github.com/go-sql-driver/Mysql",
-				Version: "v1.5.0",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeGolang,
+				Package: ftypes.Package{
+					Name:    "github.com/go-sql-driver/Mysql",
+					Version: "v1.5.0",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -181,24 +200,28 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "golang package with a local path",
-			typ:  ftypes.GoModule,
-			pkg: ftypes.Package{
-				Name:    "./private_repos/cnrm.googlesource.com/cnrm/",
-				Version: "(devel)",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeGolang,
+				Package: ftypes.Package{
+					Name:    "./private_repos/cnrm.googlesource.com/cnrm/",
+					Version: "(devel)",
+				},
 			},
 			want: nil,
 		},
 		{
 			name: "hex package",
-			typ:  ftypes.Hex,
-			pkg: ftypes.Package{
-				ID:      "bunt@0.2.0",
-				Name:    "bunt",
-				Version: "0.2.0",
-				Locations: []ftypes.Location{
-					{
-						StartLine: 2,
-						EndLine:   2,
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeHex,
+				Package: ftypes.Package{
+					ID:      "bunt@0.2.0",
+					Name:    "bunt",
+					Version: "0.2.0",
+					Locations: []ftypes.Location{
+						{
+							StartLine: 2,
+							EndLine:   2,
+						},
 					},
 				},
 			},
@@ -212,14 +235,16 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "dart package",
-			typ:  ftypes.Pub,
-			pkg: ftypes.Package{
-				Name:    "http",
-				Version: "0.13.2",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypePub,
+				Package: ftypes.Package{
+					Name:    "http",
+					Version: "0.13.2",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
-					Type:    purl.TypeDart,
+					Type:    packageurl.TypePub,
 					Name:    "http",
 					Version: "0.13.2",
 				},
@@ -227,11 +252,13 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "swift package",
-			typ:  ftypes.Swift,
-			pkg: ftypes.Package{
-				ID:      "github.com/apple/swift-atomics@1.1.0",
-				Name:    "github.com/apple/swift-atomics",
-				Version: "1.1.0",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeSwift,
+				Package: ftypes.Package{
+					ID:      "github.com/apple/swift-atomics@1.1.0",
+					Name:    "github.com/apple/swift-atomics",
+					Version: "1.1.0",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -244,11 +271,13 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "cocoapods package",
-			typ:  ftypes.Cocoapods,
-			pkg: ftypes.Package{
-				ID:      "GoogleUtilities/NSData+zlib@7.5.2",
-				Name:    "GoogleUtilities/NSData+zlib",
-				Version: "7.5.2",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeCocoapods,
+				Package: ftypes.Package{
+					ID:      "GoogleUtilities/NSData+zlib@7.5.2",
+					Name:    "GoogleUtilities/NSData+zlib",
+					Version: "7.5.2",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -261,11 +290,13 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "rust binary",
-			typ:  ftypes.RustBinary,
-			pkg: ftypes.Package{
-				ID:      "abomination@0.7.3",
-				Name:    "abomination",
-				Version: "0.7.3",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeCargo,
+				Package: ftypes.Package{
+					ID:      "abomination@0.7.3",
+					Name:    "abomination",
+					Version: "0.7.3",
+				},
 			},
 			want: &purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
@@ -277,18 +308,20 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "os package",
-			typ:  ftypes.RedHat,
-			pkg: ftypes.Package{
-				Name:            "acl",
-				Version:         "2.2.53",
-				Release:         "1.el8",
-				Epoch:           1,
-				Arch:            "aarch64",
-				SrcName:         "acl",
-				SrcVersion:      "2.2.53",
-				SrcRelease:      "1.el8",
-				SrcEpoch:        1,
-				Modularitylabel: "",
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeRPM,
+				Package: ftypes.Package{
+					Name:            "acl",
+					Version:         "2.2.53",
+					Release:         "1.el8",
+					Epoch:           1,
+					Arch:            "aarch64",
+					SrcName:         "acl",
+					SrcVersion:      "2.2.53",
+					SrcRelease:      "1.el8",
+					SrcEpoch:        1,
+					Modularitylabel: "",
+				},
 			},
 
 			metadata: types.Metadata{
@@ -322,7 +355,9 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "container",
-			typ:  purl.TypeOCI,
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeOCI,
+			},
 			metadata: types.Metadata{
 				RepoTags: []string{
 					"cblmariner2preview.azurecr.io/base/core:2.0.20220124-amd64",
@@ -356,7 +391,9 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "container local",
-			typ:  purl.TypeOCI,
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeOCI,
+			},
 			metadata: types.Metadata{
 				RepoTags:    []string{},
 				RepoDigests: []string{},
@@ -369,7 +406,9 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "container with implicit registry",
-			typ:  purl.TypeOCI,
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeOCI,
+			},
 			metadata: types.Metadata{
 				RepoTags: []string{
 					"alpine:3.14",
@@ -404,7 +443,9 @@ func TestNewPackageURL(t *testing.T) {
 		},
 		{
 			name: "sad path",
-			typ:  purl.TypeOCI,
+			pkg: purl.Package{
+				Type: ftypes.PkgTypeOCI,
+			},
 			metadata: types.Metadata{
 				RepoTags: []string{
 					"cblmariner2preview.azurecr.io/base/core:2.0.20220124-amd64",
@@ -419,7 +460,7 @@ func TestNewPackageURL(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			packageURL, err := purl.NewPackageURL(tc.typ, tc.metadata, tc.pkg)
+			packageURL, err := purl.NewPackageURL(tc.metadata, tc.pkg)
 			if tc.wantErr != "" {
 				require.Error(t, err)
 				assert.Contains(t, err.Error(), tc.wantErr)
@@ -495,11 +536,11 @@ func TestFromString(t *testing.T) {
 			},
 		},
 		{
-			name: "happy path for dart",
-			purl: "pkg:dart/http@0.13.2",
+			name: "happy path for Dart (pub)",
+			purl: "pkg:pub/http@0.13.2",
 			want: purl.PackageURL{
 				PackageURL: packageurl.PackageURL{
-					Type:       purl.TypeDart,
+					Type:       packageurl.TypePub,
 					Name:       "http",
 					Version:    "0.13.2",
 					Qualifiers: packageurl.Qualifiers{},
@@ -572,21 +613,20 @@ func TestFromString(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			pkg, err := purl.FromString(tc.purl)
 			if tc.wantErr != "" {
-				require.Error(t, err)
-				assert.Contains(t, err.Error(), tc.wantErr)
+				assert.ErrorContains(t, err, tc.wantErr)
 				return
 			}
 			assert.NoError(t, err)
-			assert.Equal(t, tc.want, *pkg, tc.name)
+			assert.EqualExportedValues(t, tc.want, *pkg, tc.name)
 		})
 	}
 }
 
-func TestPackage(t *testing.T) {
+func TestPackageURL_Package(t *testing.T) {
 	tests := []struct {
-		name    string
-		pkgURL  *purl.PackageURL
-		wantPkg *ftypes.Package
+		name   string
+		pkgURL *purl.PackageURL
+		want   *purl.Package
 	}{
 		{
 			name: "rpm + Qualifiers",
@@ -616,13 +656,16 @@ func TestPackage(t *testing.T) {
 					},
 				},
 			},
-			wantPkg: &ftypes.Package{
-				Name:            "nodejs-full-i18n",
-				Version:         "10.21.0",
-				Release:         "3.module_el8.2.0+391+8da3adc6",
-				Arch:            "x86_64",
-				Epoch:           1,
-				Modularitylabel: "nodejs:10:8020020200707141642:6a468ee4",
+			want: &purl.Package{
+				Type: ftypes.PkgTypeRPM,
+				Package: ftypes.Package{
+					Name:            "nodejs-full-i18n",
+					Version:         "10.21.0",
+					Release:         "3.module_el8.2.0+391+8da3adc6",
+					Arch:            "x86_64",
+					Epoch:           1,
+					Modularitylabel: "nodejs:10:8020020200707141642:6a468ee4",
+				},
 			},
 		},
 		{
@@ -635,9 +678,12 @@ func TestPackage(t *testing.T) {
 					Version:   "v1.0.2",
 				},
 			},
-			wantPkg: &ftypes.Package{
-				Name:    "symfony/contracts",
-				Version: "v1.0.2",
+			want: &purl.Package{
+				Type: ftypes.PkgTypeComposer,
+				Package: ftypes.Package{
+					Name:    "symfony/contracts",
+					Version: "v1.0.2",
+				},
 			},
 		},
 		{
@@ -651,9 +697,12 @@ func TestPackage(t *testing.T) {
 					Qualifiers: packageurl.Qualifiers{},
 				},
 			},
-			wantPkg: &ftypes.Package{
-				Name:    "org.springframework:spring-core",
-				Version: "5.0.4.RELEASE",
+			want: &purl.Package{
+				Type: ftypes.PkgTypeMaven,
+				Package: ftypes.Package{
+					Name:    "org.springframework:spring-core",
+					Version: "5.0.4.RELEASE",
+				},
 			},
 		},
 		{
@@ -667,9 +716,12 @@ func TestPackage(t *testing.T) {
 					Qualifiers: packageurl.Qualifiers{},
 				},
 			},
-			wantPkg: &ftypes.Package{
-				Name:    "AppCenter/Analytics",
-				Version: "4.2.0",
+			want: &purl.Package{
+				Type: ftypes.PkgTypeCocoapods,
+				Package: ftypes.Package{
+					Name:    "AppCenter/Analytics",
+					Version: "4.2.0",
+				},
 			},
 		},
 		{
@@ -688,10 +740,13 @@ func TestPackage(t *testing.T) {
 					},
 				},
 			},
-			wantPkg: &ftypes.Package{
-				Name:    "acl",
-				Version: "2.2.53",
-				Release: "1.el8",
+			want: &purl.Package{
+				Type: ftypes.PkgTypeRPM,
+				Package: ftypes.Package{
+					Name:    "acl",
+					Version: "2.2.53",
+					Release: "1.el8",
+				},
 			},
 		},
 	}
@@ -699,7 +754,7 @@ func TestPackage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.pkgURL.Package()
-			assert.Equal(t, tt.wantPkg, got)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -718,7 +773,7 @@ func TestPackageURL_LangType(t *testing.T) {
 				Name:      "spring-core",
 				Version:   "5.0.4.RELEASE",
 			},
-			want: ftypes.Jar,
+			want: ftypes.JAR,
 		},
 		{
 			name: "k8s",

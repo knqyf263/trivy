@@ -23,7 +23,8 @@ func Test_swiftLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Swift,
+						SrcType:  types.Swift,
+						PkgType:  types.PkgTypeSwift,
 						FilePath: "testdata/happy/Package.resolved",
 						Libraries: types.Packages{
 

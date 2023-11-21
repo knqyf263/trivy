@@ -22,7 +22,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	log.InitLogger(false, true)
+	_ = log.InitLogger(false, true)
 	os.Exit(m.Run())
 }
 
@@ -208,12 +208,13 @@ func TestArtifact_inspectOCIReferrerSBOM(t *testing.T) {
 			putBlobExpectations: []cache.ArtifactCachePutBlobExpectation{
 				{
 					Args: cache.ArtifactCachePutBlobArgs{
-						BlobID: "sha256:d07a1894bfd283b4ac26682ab48f12ad22cdc4fef9cf8b4c09056f631d3667a5",
+						BlobID: "sha256:338feda4c10f32b2d758d23ae7b3a30e622c20bdd2909a53f10f6f9367c23ec2",
 						BlobInfo: types.BlobInfo{
 							SchemaVersion: types.BlobJSONSchemaVersion,
 							Applications: []types.Application{
 								{
-									Type: types.GoBinary,
+									SrcType: types.GoBinary,
+									PkgType: types.PkgTypeGolang,
 									Libraries: types.Packages{
 										{
 											Name:    "github.com/opencontainers/go-digest",
@@ -235,9 +236,9 @@ func TestArtifact_inspectOCIReferrerSBOM(t *testing.T) {
 			want: types.ArtifactReference{
 				Name: registry + "/test/image:10",
 				Type: types.ArtifactCycloneDX,
-				ID:   "sha256:d07a1894bfd283b4ac26682ab48f12ad22cdc4fef9cf8b4c09056f631d3667a5",
+				ID:   "sha256:338feda4c10f32b2d758d23ae7b3a30e622c20bdd2909a53f10f6f9367c23ec2",
 				BlobIDs: []string{
-					"sha256:d07a1894bfd283b4ac26682ab48f12ad22cdc4fef9cf8b4c09056f631d3667a5",
+					"sha256:338feda4c10f32b2d758d23ae7b3a30e622c20bdd2909a53f10f6f9367c23ec2",
 				},
 			},
 		},

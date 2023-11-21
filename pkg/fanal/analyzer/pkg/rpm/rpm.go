@@ -197,7 +197,7 @@ func (a rpmPkgAnalyzer) Required(filePath string, _ os.FileInfo) bool {
 }
 
 func (a rpmPkgAnalyzer) Type() analyzer.Type {
-	return analyzer.TypeRpm
+	return analyzer.TypeRPM
 }
 
 func (a rpmPkgAnalyzer) Version() int {

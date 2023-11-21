@@ -47,7 +47,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 				},
 				Applications: []ftypes.Application{
 					{
-						Type:     ftypes.Composer,
+						SrcType:  ftypes.Composer,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "app/composer/composer.lock",
 						Libraries: ftypes.Packages{
 							{
@@ -59,7 +60,6 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 								},
 							},
 							{
-
 								Name:    "pear/pear_exception",
 								Version: "v1.0.0",
 								Ref:     "pkg:composer/pear/pear_exception@v1.0.0",
@@ -70,7 +70,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type:     ftypes.GoBinary,
+						SrcType:  ftypes.GoBinary,
+						PkgType:  ftypes.PkgTypeGolang,
 						FilePath: "app/gobinary/gobinary",
 						Libraries: ftypes.Packages{
 							{
@@ -84,7 +85,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type:     ftypes.Gradle,
+						SrcType:  ftypes.Gradle,
+						PkgType:  ftypes.PkgTypeMaven,
 						FilePath: "app/gradle/target/gradle.lockfile",
 						Libraries: ftypes.Packages{
 							{
@@ -98,7 +100,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type: ftypes.Jar,
+						SrcType: ftypes.JAR,
+						PkgType: ftypes.PkgTypeMaven,
 						Libraries: ftypes.Packages{
 							{
 								Name:    "org.codehaus.mojo:child-project",
@@ -112,7 +115,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type:     ftypes.NodePkg,
+						SrcType:  ftypes.NodePkg,
+						PkgType:  ftypes.PkgTypeNPM,
 						FilePath: "",
 						Libraries: ftypes.Packages{
 							{
@@ -145,7 +149,13 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 				},
 				Applications: []ftypes.Application{
 					{
-						Type: ftypes.GoBinary,
+						SrcType:  ftypes.GoBinary,
+						PkgType:  ftypes.PkgTypeGolang,
+						FilePath: "node-core-components",
+					},
+					{
+						SrcType: ftypes.SBOM,
+						PkgType: ftypes.PkgTypeGolang,
 						Libraries: ftypes.Packages{
 							{
 								Name:    "docker",
@@ -155,11 +165,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type:     "golang",
-						FilePath: "node-core-components",
-					},
-					{
-						Type: ftypes.K8sUpstream,
+						SrcType: ftypes.SBOM,
+						PkgType: ftypes.PkgTypeK8s,
 						Libraries: ftypes.Packages{
 							{
 								Name:    "k8s.io/apiserver",
@@ -269,7 +276,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 				},
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.SBOM,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "",
 						Libraries: ftypes.Packages{
 							{
@@ -278,7 +286,6 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 								Ref:     "pkg:composer/pear/log@1.13.1",
 							},
 							{
-
 								Name:    "pear/pear_exception",
 								Version: "v1.0.0",
 								Ref:     "pkg:composer/pear/pear_exception@v1.0.0",
@@ -294,7 +301,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.SBOM,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "",
 						Libraries: ftypes.Packages{
 							{
@@ -313,7 +321,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.SBOM,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "",
 						Libraries: ftypes.Packages{
 							{
@@ -322,7 +331,6 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 								Ref:     "pkg:composer/pear/log@1.13.1",
 							},
 							{
-
 								Name:    "pear/pear_exception",
 								Version: "v1.0.0",
 								Ref:     "pkg:composer/pear/pear_exception@v1.0.0",
@@ -338,7 +346,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.SBOM,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "",
 						Libraries: ftypes.Packages{
 							{
@@ -352,7 +361,6 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 								Ref:     "pkg:composer/pear/log@1.13.1",
 							},
 							{
-
 								Name:    "pear/pear_exception",
 								Version: "v1.0.0",
 								Ref:     "pkg:composer/pear/pear_exception@v1.0.0",
@@ -368,7 +376,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type: "jar",
+						SrcType: ftypes.JAR,
+						PkgType: ftypes.PkgTypeMaven,
 						Libraries: ftypes.Packages{
 							{
 								Name:     "org.springframework:spring-web",

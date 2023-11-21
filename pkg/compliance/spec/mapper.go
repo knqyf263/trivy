@@ -17,7 +17,7 @@ func MapSpecCheckIDToFilteredResults(result types.Result, checkIDs map[types.Sca
 		mapCheckByID[vuln.GetID()] = append(mapCheckByID[vuln.GetID()], types.Result{
 			Target:          result.Target,
 			Class:           result.Class,
-			Type:            result.Type,
+			Source:          result.Source,
 			Vulnerabilities: []types.DetectedVulnerability{vuln},
 		})
 	}
@@ -30,7 +30,7 @@ func MapSpecCheckIDToFilteredResults(result types.Result, checkIDs map[types.Sca
 		mapCheckByID[m.GetID()] = append(mapCheckByID[m.GetID()], types.Result{
 			Target:            result.Target,
 			Class:             result.Class,
-			Type:              result.Type,
+			Source:            result.Source,
 			MisconfSummary:    misconfigSummary(m),
 			Misconfigurations: []types.DetectedMisconfiguration{m},
 		})

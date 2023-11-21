@@ -24,7 +24,8 @@ func Test_cocoaPodsLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Cocoapods,
+						SrcType:  types.Cocoapods,
+						PkgType:  types.PkgTypeCocoapods,
 						FilePath: "testdata/happy.lock",
 						Libraries: types.Packages{
 							{

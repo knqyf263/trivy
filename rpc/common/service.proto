@@ -25,7 +25,8 @@ message PackageInfo {
 }
 
 message Application {
-  string           type      = 1;
+  string           src_type  = 1;
+  string           pkg_type  = 4;
   string           file_path = 2;
   repeated Package libraries = 3;
 }
@@ -229,8 +230,8 @@ message LicenseFinding {
   string               link       = 4;
 }
 
-// Enumerations are wrapped with a message to improve the readability of enumerations 
-// in generated code and avoid name conflicts.
+// Enumerations are wrapped with a message to improve the readability of
+// enumerations in generated code and avoid name conflicts.
 // https://github.com/golang/protobuf/issues/513
 message LicenseCategory {
   enum Enum {

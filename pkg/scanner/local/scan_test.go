@@ -73,7 +73,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     ftypes.Bundler,
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -91,9 +92,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "alpine:latest (alpine 3.11)",
-					Class:  types.ClassOSPkg,
-					Type:   ftypes.Alpine,
+					Target:  "alpine:latest (alpine 3.11)",
+					Class:   types.ClassOSPkg,
+					Source:  ftypes.Alpine,
+					PkgType: ftypes.PkgTypeApk,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2020-9999",
@@ -114,9 +116,10 @@ func TestScanner_Scan(t *testing.T) {
 					},
 				},
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2014-0081",
@@ -195,7 +198,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -213,9 +217,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "alpine:latest (alpine 3.11)",
-					Class:  types.ClassOSPkg,
-					Type:   ftypes.Alpine,
+					Target:  "alpine:latest (alpine 3.11)",
+					Class:   types.ClassOSPkg,
+					Source:  ftypes.Alpine,
+					PkgType: ftypes.PkgTypeApk,
 					Packages: []ftypes.Package{
 						{
 							Name:       "ausl",
@@ -257,9 +262,10 @@ func TestScanner_Scan(t *testing.T) {
 					},
 				},
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Packages: []ftypes.Package{
 						{
 							Name:    "rails",
@@ -347,7 +353,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -365,9 +372,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "alpine:latest (alpine 3.11)",
-					Class:  types.ClassOSPkg,
-					Type:   ftypes.Alpine,
+					Target:  "alpine:latest (alpine 3.11)",
+					Class:   types.ClassOSPkg,
+					Source:  ftypes.Alpine,
+					PkgType: ftypes.PkgTypeApk,
 					Packages: []ftypes.Package{
 						{
 							Name:       "ausl",
@@ -390,9 +398,10 @@ func TestScanner_Scan(t *testing.T) {
 					},
 				},
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Packages: []ftypes.Package{
 						{
 							Name:    "rails",
@@ -433,7 +442,8 @@ func TestScanner_Scan(t *testing.T) {
 						OS: ftypes.OS{},
 						Applications: []ftypes.Application{
 							{
-								Type:     ftypes.Bundler,
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -446,7 +456,8 @@ func TestScanner_Scan(t *testing.T) {
 								},
 							},
 							{
-								Type:     ftypes.Bundler,
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -464,9 +475,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   "bundler",
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2014-0081",
@@ -514,7 +526,8 @@ func TestScanner_Scan(t *testing.T) {
 					Detail: ftypes.ArtifactDetail{
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "",
 								Libraries: []ftypes.Package{
 									{
@@ -524,7 +537,8 @@ func TestScanner_Scan(t *testing.T) {
 								},
 							},
 							{
-								Type:     "composer",
+								SrcType:  ftypes.Composer,
+								PkgType:  ftypes.PkgTypeComposer,
 								FilePath: "",
 								Libraries: []ftypes.Package{
 									{
@@ -539,9 +553,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Packages: []ftypes.Package{
 						{
 							Name:    "rails",
@@ -570,9 +585,10 @@ func TestScanner_Scan(t *testing.T) {
 					},
 				},
 				{
-					Target: "",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Composer,
+					Target:  "",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Composer,
+					PkgType: ftypes.PkgTypeComposer,
 					Packages: []ftypes.Package{
 						{
 							Name:    "laravel/framework",
@@ -617,7 +633,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -636,14 +653,16 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "alpine:latest (alpine 3.11)",
-					Class:  types.ClassOSPkg,
-					Type:   ftypes.Alpine,
+					Target:  "alpine:latest (alpine 3.11)",
+					Class:   types.ClassOSPkg,
+					Source:  ftypes.Alpine,
+					PkgType: ftypes.PkgTypeApk,
 				},
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2014-0081",
@@ -701,7 +720,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -719,9 +739,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2014-0081",
@@ -807,7 +828,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{
@@ -820,7 +842,8 @@ func TestScanner_Scan(t *testing.T) {
 								},
 							},
 							{
-								Type:     "composer",
+								SrcType:  ftypes.Composer,
+								PkgType:  ftypes.PkgTypeComposer,
 								FilePath: "/app/composer-lock.json",
 								Libraries: []ftypes.Package{
 									{
@@ -838,9 +861,10 @@ func TestScanner_Scan(t *testing.T) {
 			},
 			wantResults: types.Results{
 				{
-					Target: "/app/Gemfile.lock",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Bundler,
+					Target:  "/app/Gemfile.lock",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Bundler,
+					PkgType: ftypes.PkgTypeGem,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2014-0081",
@@ -866,9 +890,10 @@ func TestScanner_Scan(t *testing.T) {
 					},
 				},
 				{
-					Target: "/app/composer-lock.json",
-					Class:  types.ClassLangPkg,
-					Type:   ftypes.Composer,
+					Target:  "/app/composer-lock.json",
+					Class:   types.ClassLangPkg,
+					Source:  ftypes.Composer,
+					PkgType: ftypes.PkgTypeComposer,
 					Vulnerabilities: []types.DetectedVulnerability{
 						{
 							VulnerabilityID:  "CVE-2021-21263",
@@ -972,7 +997,7 @@ func TestScanner_Scan(t *testing.T) {
 				{
 					Target: "/app/configs/deployment.yaml",
 					Class:  types.ClassConfig,
-					Type:   ftypes.Kubernetes,
+					Source: ftypes.Kubernetes,
 					Misconfigurations: []types.DetectedMisconfiguration{
 						{
 							Type:      "Kubernetes Security Check",
@@ -1007,7 +1032,7 @@ func TestScanner_Scan(t *testing.T) {
 				{
 					Target: "/app/configs/pod.yaml",
 					Class:  types.ClassConfig,
-					Type:   ftypes.Kubernetes,
+					Source: ftypes.Kubernetes,
 					Misconfigurations: []types.DetectedMisconfiguration{
 						{
 							Type:      "Kubernetes Security Check",
@@ -1093,7 +1118,8 @@ func TestScanner_Scan(t *testing.T) {
 						},
 						Applications: []ftypes.Application{
 							{
-								Type:     "bundler",
+								SrcType:  ftypes.Bundler,
+								PkgType:  ftypes.PkgTypeGem,
 								FilePath: "/app/Gemfile.lock",
 								Libraries: []ftypes.Package{
 									{

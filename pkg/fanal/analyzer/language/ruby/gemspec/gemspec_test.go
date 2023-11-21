@@ -26,7 +26,8 @@ func Test_gemspecLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GemSpec,
+						SrcType:  types.GemSpec,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "testdata/multiple_licenses.gemspec",
 						Libraries: types.Packages{
 							{
@@ -51,7 +52,8 @@ func Test_gemspecLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GemSpec,
+						SrcType:  types.GemSpec,
+						PkgType:  types.PkgTypeGem,
 						FilePath: "testdata/multiple_licenses.gemspec",
 						Libraries: types.Packages{
 							{

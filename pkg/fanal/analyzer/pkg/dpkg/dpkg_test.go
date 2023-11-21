@@ -186,8 +186,14 @@ func Test_dpkgAnalyzer_Analyze(t *testing.T) {
 						FilePath: "var/lib/dpkg/status",
 						Packages: []types.Package{
 							{
-								ID: "apt@1.6.3ubuntu0.1", Name: "apt", Version: "1.6.3ubuntu0.1",
-								SrcName: "apt", SrcVersion: "1.6.3ubuntu0.1", Maintainer: "Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>", Arch: "amd64"},
+								ID:         "apt@1.6.3ubuntu0.1",
+								Name:       "apt",
+								Version:    "1.6.3ubuntu0.1",
+								SrcName:    "apt",
+								SrcVersion: "1.6.3ubuntu0.1",
+								Maintainer: "Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>",
+								Arch:       "amd64",
+							},
 						},
 					},
 				},

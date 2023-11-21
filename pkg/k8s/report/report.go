@@ -240,7 +240,7 @@ func CreateK8sResource(artifact *artifacts.Artifact, scanResults types.Results) 
 	for _, result := range scanResults {
 		// if resource is a kubernetes file fix the target name,
 		// to avoid showing the temp file that was removed.
-		if result.Type == ftypes.Kubernetes {
+		if result.Source == ftypes.Kubernetes {
 			result.Target = fmt.Sprintf("%s/%s", artifact.Kind, artifact.Name)
 		}
 		results = append(results, result)
@@ -321,7 +321,7 @@ func copyResult(r types.Result, misconfigs []types.DetectedMisconfiguration) typ
 	return types.Result{
 		Target:            r.Target,
 		Class:             r.Class,
-		Type:              r.Type,
+		Source:            r.Source,
 		MisconfSummary:    r.MisconfSummary,
 		Misconfigurations: misconfigs,
 	}

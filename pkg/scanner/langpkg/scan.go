@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	PkgTargets = map[ftypes.LangType]string{
+	PkgSources = map[ftypes.LangType]string{
 		ftypes.PythonPkg:   "Python",
 		ftypes.CondaPkg:    "Conda",
 		ftypes.GemSpec:     "Ruby",
 		ftypes.NodePkg:     "Node.js",
-		ftypes.Jar:         "Java",
+		ftypes.JAR:         "Java",
 		ftypes.K8sUpstream: "Kubernetes",
 	}
 )
@@ -41,9 +41,10 @@ func (s *scanner) Packages(target types.ScanTarget, _ types.ScanOptions) types.R
 		}
 
 		results = append(results, types.Result{
-			Target:   targetName(app.Type, app.FilePath),
+			Target:   targetName(app.SrcType, app.FilePath),
 			Class:    types.ClassLangPkg,
-			Type:     app.Type,
+			Source:   app.SrcType,
+			PkgType:  app.PkgType,
 			Packages: app.Libraries,
 		})
 	}
@@ -65,13 +66,13 @@ func (s *scanner) Scan(target types.ScanTarget, _ types.ScanOptions) (types.Resu
 		}
 
 		// Prevent the same log messages from being displayed many times for the same type.
-		if _, ok := printedTypes[app.Type]; !ok {
-			log.Logger.Infof("Detecting %s vulnerabilities...", app.Type)
-			printedTypes[app.Type] = struct{}{}
+		if _, ok := printedTypes[app.SrcType]; !ok {
+			log.Logger.Infof("Detecting %s vulnerabilities...", app.SrcType)
+			printedTypes[app.SrcType] = struct{}{}
 		}
 
-		log.Logger.Debugf("Detecting library vulnerabilities, type: %s, path: %s", app.Type, app.FilePath)
-		vulns, err := library.Detect(app.Type, app.Libraries)
+		log.Logger.Debugf("Detecting library vulnerabilities, type: %s, path: %s", app.SrcType, app.FilePath)
+		vulns, err := library.Detect(app.PkgType, app.Libraries)
 		if err != nil {
 			return nil, xerrors.Errorf("failed vulnerability detection of libraries: %w", err)
 		} else if len(vulns) == 0 {
@@ -79,10 +80,11 @@ func (s *scanner) Scan(target types.ScanTarget, _ types.ScanOptions) (types.Resu
 		}
 
 		results = append(results, types.Result{
-			Target:          targetName(app.Type, app.FilePath),
+			Target:          targetName(app.SrcType, app.FilePath),
 			Vulnerabilities: vulns,
 			Class:           types.ClassLangPkg,
-			Type:            app.Type,
+			Source:          app.SrcType,
+			PkgType:         app.PkgType,
 		})
 	}
 	sort.Slice(results, func(i, j int) bool {
@@ -92,7 +94,7 @@ func (s *scanner) Scan(target types.ScanTarget, _ types.ScanOptions) (types.Resu
 }
 
 func targetName(appType ftypes.LangType, filePath string) string {
-	if t, ok := PkgTargets[appType]; ok && filePath == "" {
+	if t, ok := PkgSources[appType]; ok && filePath == "" {
 		// When the file path is empty, we will overwrite it with the pre-defined value.
 		return t
 	}

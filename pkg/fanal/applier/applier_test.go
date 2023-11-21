@@ -108,7 +108,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 							DiffID:        "sha256:24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7",
 							Applications: []types.Application{
 								{
-									Type:     "composer",
+									SrcType:  types.Composer,
+									PkgType:  types.PkgTypeComposer,
 									FilePath: "php-app/composer.lock",
 									Libraries: types.Packages{
 										{
@@ -167,7 +168,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     "composer",
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "php-app/composer.lock",
 						Libraries: types.Packages{
 							{
@@ -496,7 +498,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 							DiffID:        "sha256:24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7",
 							Applications: []types.Application{
 								{
-									Type:     "composer",
+									SrcType:  types.Composer,
+									PkgType:  types.PkgTypeComposer,
 									FilePath: "php-app/composer.lock",
 									Libraries: types.Packages{
 										{
@@ -539,7 +542,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     "composer",
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "php-app/composer.lock",
 						Libraries: types.Packages{
 							{
@@ -682,7 +686,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 							DiffID:        "sha256:aad63a9339440e7c3e1fff2b988991b9bfb81280042fa7f39a5e327023056819",
 							Applications: []types.Application{
 								{
-									Type:     "composer",
+									SrcType:  types.Composer,
+									PkgType:  types.PkgTypeComposer,
 									FilePath: "php-app/composer.lock",
 									Libraries: types.Packages{
 										{
@@ -708,7 +713,7 @@ func TestApplier_ApplyLayers(t *testing.T) {
 									Type:     "type-B",
 									FilePath: "var/lib/dpkg/status.d/tzdata",
 									Data: dummyData{
-										data: "Type B application which replaces earlier detected resource",
+										data: "SrcType B application which replaces earlier detected resource",
 									},
 								},
 							},
@@ -731,7 +736,8 @@ func TestApplier_ApplyLayers(t *testing.T) {
 				},
 				Applications: []types.Application{
 					{
-						Type:     "composer",
+						SrcType:  types.Composer,
+						PkgType:  types.PkgTypeComposer,
 						FilePath: "php-app/composer.lock",
 						Libraries: types.Packages{
 							{
@@ -784,7 +790,7 @@ func TestApplier_ApplyLayers(t *testing.T) {
 							DiffID: "sha256:aad63a9339440e7c3e1fff2b988991b9bfb81280042fa7f39a5e327023056819",
 						},
 						Data: dummyData{
-							data: "Type B application which replaces earlier detected resource",
+							data: "SrcType B application which replaces earlier detected resource",
 						},
 					},
 				},

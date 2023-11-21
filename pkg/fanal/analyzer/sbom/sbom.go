@@ -74,7 +74,7 @@ func (a sbomAnalyzer) Version() int {
 
 func handleBitnamiImages(componentPath string, bom types.SBOM) {
 	for i, app := range bom.Applications {
-		if app.Type == ftypes.Bitnami {
+		if app.PkgType == ftypes.PkgTypeBitnami {
 			// Set the component dir path to the application
 			bom.Applications[i].FilePath = componentPath
 			// Either Application.FilePath or Application.Libraries[].FilePath should be set

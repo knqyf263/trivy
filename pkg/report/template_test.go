@@ -71,9 +71,9 @@ func TestReportWriter_Template(t *testing.T) {
 {{- range . -}}
 {{- $failures := len .Vulnerabilities }}
     <testsuite tests="{{ $failures }}" failures="{{ $failures }}" name="{{  .Target }}" errors="0" skipped="0" time="">
-	{{- if not (eq .Type "") }}
+	{{- if not (eq .Source "") }}
         <properties>
-            <property name="type" value="{{ .Type }}"></property>
+            <property name="type" value="{{ .Source }}"></property>
         </properties>
         {{- end -}}
         {{ range .Vulnerabilities }}
@@ -172,7 +172,7 @@ func TestReportWriter_Template(t *testing.T) {
 				Results: types.Results{
 					{
 						Target:          "foojunit",
-						Type:            "test",
+						Source:          "test",
 						Vulnerabilities: tc.detectedVulns,
 					},
 				},

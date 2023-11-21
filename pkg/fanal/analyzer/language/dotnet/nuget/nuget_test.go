@@ -28,7 +28,8 @@ func Test_nugetibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NuGet,
+						SrcType:  types.NuGet,
+						PkgType:  types.PkgTypeNuGet,
 						FilePath: "packages.config",
 						Libraries: types.Packages{
 							{
@@ -53,7 +54,8 @@ func Test_nugetibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NuGet,
+						SrcType:  types.NuGet,
+						PkgType:  types.PkgTypeNuGet,
 						FilePath: "packages.lock.json",
 						Libraries: types.Packages{
 							{
@@ -94,7 +96,8 @@ func Test_nugetibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NuGet,
+						SrcType:  types.NuGet,
+						PkgType:  types.PkgTypeNuGet,
 						FilePath: "packages.lock.json",
 						Libraries: types.Packages{
 							{
@@ -135,7 +138,8 @@ func Test_nugetibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.NuGet,
+						SrcType:  types.NuGet,
+						PkgType:  types.PkgTypeNuGet,
 						FilePath: "packages.lock.json",
 						Libraries: types.Packages{
 							{

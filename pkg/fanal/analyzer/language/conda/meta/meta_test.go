@@ -25,7 +25,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.CondaPkg,
+						SrcType:  types.CondaPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/pip-22.2.2-py38h06a4308_0.json",
 						Libraries: types.Packages{
 							{

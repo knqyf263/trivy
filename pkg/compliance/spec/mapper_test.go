@@ -38,7 +38,7 @@ func TestMapSpecCheckIDToFilteredResults(t *testing.T) {
 			result: types.Result{
 				Target: "target",
 				Class:  types.ClassConfig,
-				Type:   ftypes.Kubernetes,
+				Source: ftypes.Kubernetes,
 				Misconfigurations: []types.DetectedMisconfiguration{
 					{
 						AVDID:  "AVD-KSV012",
@@ -59,7 +59,7 @@ func TestMapSpecCheckIDToFilteredResults(t *testing.T) {
 					{
 						Target: "target",
 						Class:  types.ClassConfig,
-						Type:   ftypes.Kubernetes,
+						Source: ftypes.Kubernetes,
 						MisconfSummary: &types.MisconfSummary{
 							Successes:  0,
 							Failures:   1,
@@ -77,7 +77,7 @@ func TestMapSpecCheckIDToFilteredResults(t *testing.T) {
 					{
 						Target: "target",
 						Class:  types.ClassConfig,
-						Type:   ftypes.Kubernetes,
+						Source: ftypes.Kubernetes,
 						MisconfSummary: &types.MisconfSummary{
 							Successes:  0,
 							Failures:   1,

@@ -351,7 +351,7 @@ func ConvertFromRPCResults(rpcResults []*scanner.Result) []types.Result {
 			Vulnerabilities:   ConvertFromRPCVulns(result.Vulnerabilities),
 			Misconfigurations: ConvertFromRPCMisconfs(result.Misconfigurations),
 			Class:             types.ResultClass(result.Class),
-			Type:              ftypes.TargetType(result.Type),
+			Source:            ftypes.TargetType(result.Type),
 			Packages:          ConvertFromRPCPkgs(result.Packages),
 			CustomResources:   ConvertFromRPCCustomResources(result.CustomResources),
 			Secrets:           ConvertFromRPCSecretFindings(result.Secrets),
@@ -665,7 +665,7 @@ func ConvertFromRPCApplications(rpcApps []*common.Application) []ftypes.Applicat
 	var apps []ftypes.Application
 	for _, rpcApp := range rpcApps {
 		apps = append(apps, ftypes.Application{
-			Type:      ftypes.LangType(rpcApp.Type),
+			SrcType:   ftypes.LangType(rpcApp.Type),
 			FilePath:  rpcApp.FilePath,
 			Libraries: ConvertFromRPCPkgs(rpcApp.Libraries),
 		})
@@ -790,7 +790,7 @@ func ConvertToRPCPutBlobRequest(diffID string, blobInfo ftypes.BlobInfo) *cache.
 	var applications []*common.Application
 	for _, app := range blobInfo.Applications {
 		applications = append(applications, &common.Application{
-			Type:      string(app.Type),
+			Type:      string(app.SrcType),
 			FilePath:  app.FilePath,
 			Libraries: ConvertToRPCPkgs(app.Libraries),
 		})
@@ -876,7 +876,7 @@ func ConvertToRPCScanResponse(results types.Results, fos ftypes.OS) *scanner.Sca
 		rpcResults = append(rpcResults, &scanner.Result{
 			Target:            result.Target,
 			Class:             string(result.Class),
-			Type:              string(result.Type),
+			Type:              string(result.Source),
 			Vulnerabilities:   ConvertToRPCVulns(result.Vulnerabilities),
 			Misconfigurations: ConvertToRPCMisconfs(result.Misconfigurations),
 			Packages:          ConvertToRPCPkgs(result.Packages),

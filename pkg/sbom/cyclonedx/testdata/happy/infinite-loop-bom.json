@@ -66,7 +66,7 @@
         },
         {
           "name": "aquasecurity:trivy:PkgType",
-          "value": "ubuntu"
+          "value": "deb"
         },
         {
           "name": "aquasecurity:trivy:SrcName",
@@ -103,7 +103,7 @@
         },
         {
           "name": "aquasecurity:trivy:PkgType",
-          "value": "ubuntu"
+          "value": "deb"
         },
         {
           "name": "aquasecurity:trivy:SrcName",

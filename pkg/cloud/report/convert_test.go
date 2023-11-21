@@ -109,7 +109,7 @@ func Test_ResultConversion(t *testing.T) {
 						{
 							Target: "arn:aws:s3:us-east-1:1234567890:bucket1",
 							Class:  "config",
-							Type:   "cloud",
+							Source: "cloud",
 							Misconfigurations: []types.DetectedMisconfiguration{
 								{
 									Type:        "AWS",
@@ -139,7 +139,7 @@ func Test_ResultConversion(t *testing.T) {
 						{
 							Target: "arn:aws:s3:us-east-1:1234567890:bucket2",
 							Class:  "config",
-							Type:   "cloud",
+							Source: "cloud",
 							Misconfigurations: []types.DetectedMisconfiguration{
 								{
 									Type:        "AWS",
@@ -190,7 +190,7 @@ func Test_ResultConversion(t *testing.T) {
 						{
 							Target: "arn:aws:ec2:us-east-1:1234567890:instance1",
 							Class:  "config",
-							Type:   "cloud",
+							Source: "cloud",
 							Misconfigurations: []types.DetectedMisconfiguration{
 								{
 									Type:        "AWS",

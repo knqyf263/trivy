@@ -244,7 +244,6 @@ var pkgs = []types.Package{
 			"usr/share/aclocal/pkg.m4",
 		},
 	},
-
 	{
 		ID:         "sqlite-libs@3.26.0-r3",
 		Name:       "sqlite-libs",
@@ -260,7 +259,6 @@ var pkgs = []types.Package{
 			"usr/lib/libsqlite3.so.0.8.6",
 		},
 	},
-
 	{
 		ID:         "test@2.9.11_pre20061021-r2",
 		Name:       "test",

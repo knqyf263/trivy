@@ -197,7 +197,7 @@ func (r *AnalysisResult) Sort() {
 		if r.Applications[i].FilePath != r.Applications[j].FilePath {
 			return r.Applications[i].FilePath < r.Applications[j].FilePath
 		}
-		return r.Applications[i].Type < r.Applications[j].Type
+		return r.Applications[i].SrcType < r.Applications[j].SrcType
 	})
 
 	for _, app := range r.Applications {

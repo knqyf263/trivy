@@ -177,8 +177,8 @@ func easyjson6601e8cdDecodeGithubComAquasecurityTrivyPkgModuleSerialize2(in *jle
 			out.Target = string(in.String())
 		case "Class":
 			out.Class = types.ResultClass(in.String())
-		case "Type":
-			out.Type = types1.TargetType(in.String())
+		case "SrcType":
+			out.Source = types1.TargetType(in.String())
 		case "Packages":
 			if in.IsNull() {
 				in.Skip()
@@ -351,10 +351,10 @@ func easyjson6601e8cdEncodeGithubComAquasecurityTrivyPkgModuleSerialize2(out *jw
 		out.RawString(prefix)
 		out.String(string(in.Class))
 	}
-	if in.Type != "" {
-		const prefix string = ",\"Type\":"
+	if in.Source != "" {
+		const prefix string = ",\"SrcType\":"
 		out.RawString(prefix)
-		out.String(string(in.Type))
+		out.String(string(in.Source))
 	}
 	if len(in.Packages) != 0 {
 		const prefix string = ",\"Packages\":"
@@ -490,7 +490,7 @@ func easyjson6601e8cdDecodeGithubComAquasecurityTrivyPkgFanalTypes2(in *jlexer.L
 			continue
 		}
 		switch key {
-		case "Type":
+		case "SrcType":
 			out.Type = string(in.String())
 		case "FilePath":
 			out.FilePath = string(in.String())
@@ -519,7 +519,7 @@ func easyjson6601e8cdEncodeGithubComAquasecurityTrivyPkgFanalTypes2(out *jwriter
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"Type\":"
+		const prefix string = ",\"SrcType\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
 	}
@@ -979,7 +979,7 @@ func easyjson6601e8cdDecodeGithubComAquasecurityTrivyPkgTypes2(in *jlexer.Lexer,
 			continue
 		}
 		switch key {
-		case "Type":
+		case "SrcType":
 			out.Type = string(in.String())
 		case "ID":
 			out.ID = string(in.String())
@@ -1068,7 +1068,7 @@ func easyjson6601e8cdEncodeGithubComAquasecurityTrivyPkgTypes2(out *jwriter.Writ
 	first := true
 	_ = first
 	if in.Type != "" {
-		const prefix string = ",\"Type\":"
+		const prefix string = ",\"SrcType\":"
 		first = false
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
@@ -2927,7 +2927,7 @@ func easyjson6601e8cdDecodeGithubComAquasecurityTrivyPkgModuleSerialize5(in *jle
 			continue
 		}
 		switch key {
-		case "Type":
+		case "SrcType":
 			out.Type = string(in.String())
 		case "FilePath":
 			out.FilePath = string(in.String())
@@ -2954,7 +2954,7 @@ func easyjson6601e8cdEncodeGithubComAquasecurityTrivyPkgModuleSerialize5(out *jw
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"Type\":"
+		const prefix string = ",\"SrcType\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
 	}

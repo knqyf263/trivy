@@ -24,7 +24,7 @@ type pomAnalyzer struct{}
 
 func (a pomAnalyzer) Analyze(_ context.Context, input analyzer.AnalysisInput) (*analyzer.AnalysisResult, error) {
 	p := pom.NewParser(filepath.Join(input.Dir, input.FilePath), pom.WithOffline(input.Options.Offline))
-	res, err := language.Analyze(types.Pom, input.FilePath, input.Content, p)
+	res, err := language.Analyze(types.POM, input.FilePath, input.Content, p)
 	if err != nil {
 		return nil, xerrors.Errorf("%s parse error: %w", input.FilePath, err)
 	}

@@ -25,7 +25,8 @@ func Test_depsLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.DotNetCore,
+						SrcType:  types.DotNetCore,
+						PkgType:  types.PkgTypeNuGet,
 						FilePath: "testdata/datacollector.deps.json",
 						Libraries: types.Packages{
 							{

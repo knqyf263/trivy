@@ -104,7 +104,8 @@ var (
 type Result struct {
 	Target            string                     `json:"Target"`
 	Class             ResultClass                `json:"Class,omitempty"`
-	Type              ftypes.TargetType          `json:"Type,omitempty"`
+	Source            ftypes.TargetType          `json:"Type,omitempty"` // Keep using "Type" for backward compatibility
+	PkgType           ftypes.PkgType             `json:"PkgType,omitempty"`
 	Packages          []ftypes.Package           `json:"Packages,omitempty"`
 	Vulnerabilities   []DetectedVulnerability    `json:"Vulnerabilities,omitempty"`
 	MisconfSummary    *MisconfSummary            `json:"MisconfSummary,omitempty"`

@@ -23,7 +23,8 @@ func Test_gradleLockAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Gradle,
+						SrcType:  types.Gradle,
+						PkgType:  types.PkgTypeMaven,
 						FilePath: "testdata/happy.lockfile",
 						Libraries: types.Packages{
 							{

@@ -25,7 +25,8 @@ func Test_pnpmPkgLibraryAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pnpm,
+						SrcType:  types.Pnpm,
+						PkgType:  types.PkgTypeNPM,
 						FilePath: "testdata/pnpm-lock.yaml",
 						Libraries: types.Packages{
 							{

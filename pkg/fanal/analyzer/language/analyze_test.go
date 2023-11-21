@@ -61,7 +61,8 @@ func TestAnalyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.GoBinary,
+						SrcType:  types.GoBinary,
+						PkgType:  types.PkgTypeGolang,
 						FilePath: "app/myweb",
 						Libraries: types.Packages{
 							{
@@ -85,7 +86,7 @@ func TestAnalyze(t *testing.T) {
 		{
 			name: "sad path",
 			args: args{
-				fileType: types.Jar,
+				fileType: types.JAR,
 				filePath: "app/myweb",
 				content:  strings.NewReader("sad"),
 			},
@@ -98,8 +99,7 @@ func TestAnalyze(t *testing.T) {
 
 			got, err := language.Analyze(tt.args.fileType, tt.args.filePath, tt.args.content, mp)
 			if tt.wantErr != "" {
-				require.NotNil(t, err)
-				assert.Contains(t, err.Error(), tt.wantErr)
+				assert.ErrorContains(t, err, tt.wantErr)
 				return
 			}
 

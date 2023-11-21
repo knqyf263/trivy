@@ -131,7 +131,8 @@ func toApplication(fileType types.LangType, filePath, libFilePath string, r dio.
 	}
 
 	return &types.Application{
-		Type:      fileType,
+		SrcType:   fileType,
+		PkgType:   fileType.PkgType(),
 		FilePath:  filePath,
 		Libraries: pkgs,
 	}

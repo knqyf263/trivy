@@ -48,7 +48,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 				},
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.Composer,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "app/composer/composer.lock",
 						Libraries: ftypes.Packages{
 							{
@@ -71,7 +72,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type:     "gobinary",
+						SrcType:  ftypes.GoBinary,
+						PkgType:  ftypes.PkgTypeGolang,
 						FilePath: "app/gobinary/gobinary",
 						Libraries: ftypes.Packages{
 							{
@@ -85,7 +87,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type: "jar",
+						SrcType: ftypes.JAR,
+						PkgType: ftypes.PkgTypeMaven,
 						Libraries: ftypes.Packages{
 							{
 								Name:    "org.codehaus.mojo:child-project",
@@ -98,7 +101,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 						},
 					},
 					{
-						Type: "node-pkg",
+						SrcType: ftypes.NodePkg,
+						PkgType: ftypes.PkgTypeNPM,
 						Libraries: ftypes.Packages{
 							{
 								Name:     "bootstrap",
@@ -120,7 +124,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type: "node-pkg",
+						SrcType: ftypes.NodePkg,
+						PkgType: ftypes.PkgTypeNPM,
 						Libraries: ftypes.Packages{
 							{
 								ID:       "yargs-parser@21.1.1",
@@ -141,7 +146,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type: "node-pkg",
+						SrcType: ftypes.NodePkg,
+						PkgType: ftypes.PkgTypeNPM,
 						Libraries: ftypes.Packages{
 							{
 								ID:       "yargs-parser@21.1.1",
@@ -162,7 +168,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type: "node-pkg",
+						SrcType: ftypes.NodePkg,
+						PkgType: ftypes.PkgTypeNPM,
 						Libraries: ftypes.Packages{
 							{
 								ID:       "yargs-parser@21.1.1",
@@ -183,7 +190,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type:     "composer",
+						SrcType:  ftypes.Composer,
+						PkgType:  ftypes.PkgTypeComposer,
 						FilePath: "app/composer/composer.lock",
 						Libraries: ftypes.Packages{
 							{
@@ -208,7 +216,8 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			want: types.SBOM{
 				Applications: []ftypes.Application{
 					{
-						Type: ftypes.Jar,
+						SrcType: ftypes.SBOM,
+						PkgType: ftypes.PkgTypeMaven,
 						Libraries: ftypes.Packages{
 							{
 								FilePath: "modules/apm/elastic-apm-agent-1.36.0.jar",
@@ -267,7 +276,7 @@ func TestUnmarshaler_Unmarshal(t *testing.T) {
 			v.SPDX = nil
 
 			sort.Slice(v.Applications, func(i, j int) bool {
-				return v.Applications[i].Type < v.Applications[j].Type
+				return v.Applications[i].SrcType < v.Applications[j].SrcType
 			})
 			require.NoError(t, err)
 			assert.Equal(t, tt.want, *v.SBOM)

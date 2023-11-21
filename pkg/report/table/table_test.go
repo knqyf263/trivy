@@ -170,7 +170,7 @@ Total: 1 (MEDIUM: 0, HIGH: 1)
 				{
 					Target: "package-lock.json",
 					Class:  types.ClassLangPkg,
-					Type:   "npm",
+					Source: ftypes.Npm,
 					Packages: []ftypes.Package{
 						{
 							ID:       "node-fetch@1.7.3",
@@ -268,7 +268,7 @@ package-lock.json
 				{
 					Target: "package-lock.json",
 					Class:  types.ClassLangPkg,
-					Type:   "npm",
+					Source: ftypes.Npm,
 					Packages: []ftypes.Package{
 						{
 							ID:       "node-fetch@1.7.3",

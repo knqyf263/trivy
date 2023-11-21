@@ -49,6 +49,7 @@ const (
 	PropertyRepoTag    = "RepoTag"
 
 	// Package properties
+	PropertyPkgType     = "PkgType"
 	PropertyPkgID       = "PkgID"
 	PropertyLayerDiffID = "LayerDiffID"
 	PropertyLayerDigest = "LayerDigest"
@@ -137,7 +138,11 @@ func (m *Marshaler) Marshal(r types.Report) (*spdx.Document, error) {
 		)
 
 		for _, pkg := range result.Packages {
-			spdxPackage, err := m.pkgToSpdxPackage(result.Type, pkgDownloadLocation, result.Class, r.Metadata, pkg)
+			purlPkg := purl.Package{
+				Type:    result.PkgType,
+				Package: pkg,
+			}
+			spdxPackage, err := m.pkgToSpdxPackage(pkgDownloadLocation, result.Class, r.Metadata, purlPkg)
 			if err != nil {
 				return nil, xerrors.Errorf("failed to parse package: %w", err)
 			}
@@ -214,7 +219,7 @@ func (m *Marshaler) resultToSpdxPackage(result types.Result, os *ftypes.OS, pkgD
 		}
 		return osPkg, nil
 	case types.ClassLangPkg:
-		langPkg, err := m.langPackage(result.Target, pkgDownloadLocation, result.Type)
+		langPkg, err := m.langPackage(result.Target, pkgDownloadLocation, result.Source)
 		if err != nil {
 			return spdx.Package{}, xerrors.Errorf("failed to parse application package: %w", err)
 		}
@@ -243,7 +248,7 @@ func (m *Marshaler) rootPackage(r types.Report, pkgDownloadLocation string) (*sp
 	attributionTexts := []string{attributionText(PropertySchemaVersion, strconv.Itoa(r.SchemaVersion))}
 
 	// When the target is a container image, add PURL to the external references of the root package.
-	if p, err := purl.NewPackageURL(purl.TypeOCI, r.Metadata, ftypes.Package{}); err != nil {
+	if p, err := purl.NewPackageURL(r.Metadata, purl.Package{Type: ftypes.PkgTypeOCI}); err != nil {
 		return nil, xerrors.Errorf("failed to new package url for oci: %w", err)
 	} else if p != nil {
 		externalReferences = append(externalReferences, purlExternalReference(p.ToString()))
@@ -320,20 +325,20 @@ func (m *Marshaler) langPackage(target, pkgDownloadLocation string, appType ftyp
 	}, nil
 }
 
-func (m *Marshaler) pkgToSpdxPackage(t ftypes.TargetType, pkgDownloadLocation string, class types.ResultClass, metadata types.Metadata, pkg ftypes.Package) (spdx.Package, error) {
+func (m *Marshaler) pkgToSpdxPackage(pkgDownloadLocation string, class types.ResultClass, metadata types.Metadata, pkg purl.Package) (spdx.Package, error) {
 	license := GetLicense(pkg)
 
-	pkgID, err := calcPkgID(m.hasher, pkg)
+	pkgID, err := calcPkgID(m.hasher, pkg.Package)
 	if err != nil {
 		return spdx.Package{}, xerrors.Errorf("failed to get %s package ID: %w", pkg.Name, err)
 	}
 
 	var pkgSrcInfo string
 	if class == types.ClassOSPkg && pkg.SrcName != "" {
-		pkgSrcInfo = fmt.Sprintf("%s: %s %s", SourcePackagePrefix, pkg.SrcName, utils.FormatSrcVersion(pkg))
+		pkgSrcInfo = fmt.Sprintf("%s: %s %s", SourcePackagePrefix, pkg.SrcName, utils.FormatSrcVersion(pkg.Package))
 	}
 
-	packageURL, err := purl.NewPackageURL(t, metadata, pkg)
+	packageURL, err := purl.NewPackageURL(metadata, pkg)
 	if err != nil {
 		return spdx.Package{}, xerrors.Errorf("failed to parse purl (%s): %w", pkg.Name, err)
 	}
@@ -363,7 +368,7 @@ func (m *Marshaler) pkgToSpdxPackage(t ftypes.TargetType, pkgDownloadLocation st
 
 	return spdx.Package{
 		PackageName:             pkg.Name,
-		PackageVersion:          utils.FormatVersion(pkg),
+		PackageVersion:          utils.FormatVersion(pkg.Package),
 		PackageSPDXIdentifier:   elementID(ElementPackage, pkgID),
 		PackageDownloadLocation: pkgDownloadLocation,
 		PackageSourceInfo:       pkgSrcInfo,
@@ -428,7 +433,7 @@ func purlExternalReference(packageURL string) *spdx.PackageExternalReference {
 	}
 }
 
-func GetLicense(p ftypes.Package) string {
+func GetLicense(p purl.Package) string {
 	if len(p.Licenses) == 0 {
 		return noneField
 	}

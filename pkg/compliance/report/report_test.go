@@ -34,7 +34,7 @@ func TestBuildComplianceReport(t *testing.T) {
 						{
 							Target: "Deployment/metrics-server",
 							Class:  types.ClassConfig,
-							Type:   ftypes.Kubernetes,
+							Source: ftypes.Kubernetes,
 							MisconfSummary: &types.MisconfSummary{
 								Successes:  1,
 								Failures:   0,
@@ -72,7 +72,7 @@ func TestBuildComplianceReport(t *testing.T) {
 						{
 							Target: "rancher/metrics-server:v0.3.6 (debian 9.9)",
 							Class:  types.ClassOSPkg,
-							Type:   "debian",
+							Source: "debian",
 							Vulnerabilities: []types.DetectedVulnerability{
 								{
 									VulnerabilityID:  "DLA-2424-1",
@@ -156,7 +156,7 @@ func TestBuildComplianceReport(t *testing.T) {
 							{
 								Target: "Deployment/metrics-server",
 								Class:  types.ClassConfig,
-								Type:   ftypes.Kubernetes,
+								Source: ftypes.Kubernetes,
 								MisconfSummary: &types.MisconfSummary{
 									Successes:  1,
 									Failures:   0,
@@ -201,7 +201,7 @@ func TestBuildComplianceReport(t *testing.T) {
 							{
 								Target: "rancher/metrics-server:v0.3.6 (debian 9.9)",
 								Class:  types.ClassOSPkg,
-								Type:   "debian",
+								Source: "debian",
 								Vulnerabilities: []types.DetectedVulnerability{
 									{
 										VulnerabilityID:  "DLA-2424-1",

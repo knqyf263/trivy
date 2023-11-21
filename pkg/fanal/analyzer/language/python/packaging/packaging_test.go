@@ -26,7 +26,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/kitchen-1.2.6-py2.7.egg",
 						Libraries: types.Packages{
 							{
@@ -47,7 +48,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/happy.egg-info/PKG-INFO",
 						Libraries: types.Packages{
 							{
@@ -68,7 +70,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/classifier-license.egg-info/PKG-INFO",
 						Libraries: types.Packages{
 							{
@@ -88,7 +91,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/classifier-license.dist-info/METADATA",
 						Libraries: types.Packages{
 							{
@@ -108,7 +112,8 @@ func Test_packagingAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.PythonPkg,
+						SrcType:  types.PythonPkg,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/happy.dist-info/METADATA",
 						Libraries: types.Packages{
 							{

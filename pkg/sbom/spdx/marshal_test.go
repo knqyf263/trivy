@@ -1,6 +1,7 @@
 package spdx_test
 
 import (
+	"github.com/aquasecurity/trivy/pkg/purl"
 	"hash/fnv"
 	"testing"
 	"time"
@@ -49,9 +50,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				},
 				Results: types.Results{
 					{
-						Target: "rails:latest (centos 8.3.2011)",
-						Class:  types.ClassOSPkg,
-						Type:   ftypes.CentOS,
+						Target:  "rails:latest (centos 8.3.2011)",
+						Class:   types.ClassOSPkg,
+						Source:  ftypes.CentOS,
+						PkgType: ftypes.PkgTypeRPM,
 						Packages: []ftypes.Package{
 							{
 								Name:            "binutils",
@@ -71,9 +73,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "app/subproject/Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "app/subproject/Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								Name:    "actionpack",
@@ -86,9 +89,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "app/Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "app/Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								Name:    "actionpack",
@@ -291,9 +295,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				},
 				Results: types.Results{
 					{
-						Target: "centos:latest (centos 8.3.2011)",
-						Class:  types.ClassOSPkg,
-						Type:   ftypes.CentOS,
+						Target:  "centos:latest (centos 8.3.2011)",
+						Class:   types.ClassOSPkg,
+						Source:  ftypes.CentOS,
+						PkgType: ftypes.PkgTypeRPM,
 						Packages: []ftypes.Package{
 							{
 								Name:            "acl",
@@ -312,9 +317,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 						},
 					},
 					{
-						Target: "Ruby",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.GemSpec,
+						Target:  "Ruby",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.GemSpec,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								Name:    "actionpack",
@@ -535,9 +541,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				ArtifactType:  ftypes.ArtifactFilesystem,
 				Results: types.Results{
 					{
-						Target: "Gemfile.lock",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.Bundler,
+						Target:  "Gemfile.lock",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.Bundler,
+						PkgType: ftypes.PkgTypeGem,
 						Packages: []ftypes.Package{
 							{
 								Name:    "actioncable",
@@ -628,9 +635,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				ArtifactType:  ftypes.ArtifactRepository,
 				Results: types.Results{
 					{
-						Target: "Node.js",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.NodePkg,
+						Target:  "Node.js",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.NodePkg,
+						PkgType: ftypes.PkgTypeNPM,
 						Packages: []ftypes.Package{
 							{
 								Name:     "ruby-typeprof",
@@ -855,9 +863,10 @@ func TestMarshaler_Marshal(t *testing.T) {
 				ArtifactType:  ftypes.ArtifactFilesystem,
 				Results: types.Results{
 					{
-						Target: "artifact",
-						Class:  types.ClassLangPkg,
-						Type:   ftypes.GoBinary,
+						Target:  "artifact",
+						Class:   types.ClassLangPkg,
+						Source:  ftypes.GoBinary,
+						PkgType: ftypes.PkgTypeGolang,
 						Packages: []ftypes.Package{
 							{
 								Name:    "./private_repos/cnrm.googlesource.com/cnrm/",
@@ -1057,7 +1066,7 @@ func Test_GetLicense(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, tspdx.GetLicense(tt.input), "getLicense(%v)", tt.input)
+			assert.Equalf(t, tt.want, tspdx.GetLicense(purl.Package{Package: tt.input}), "getLicense(%v)", tt.input)
 		})
 	}
 }

@@ -115,7 +115,7 @@ func ApplyLayers(layers []types.BlobInfo) types.ArtifactDetail {
 
 		// Apply language-specific packages
 		for _, app := range layer.Applications {
-			key := fmt.Sprintf("%s/type:%s", app.FilePath, app.Type)
+			key := fmt.Sprintf("%s/type:%s", app.FilePath, app.SrcType)
 			nestedMap.SetByString(key, sep, app)
 		}
 
@@ -221,6 +221,10 @@ func ApplyLayers(layers []types.BlobInfo) types.ArtifactDetail {
 	}
 
 	for _, app := range mergedLayer.Applications {
+		if app.PkgType == "" {
+			// For backward compatibility
+			app.PkgType = app.SrcType.PkgType()
+		}
 		for i, lib := range app.Libraries {
 			// Skip lookup for SBOM
 			if !lo.IsEmpty(lib.Layer) {
@@ -245,15 +249,15 @@ func aggregate(detail *types.ArtifactDetail) {
 	var apps []types.Application
 
 	aggregatedApps := map[types.LangType]*types.Application{
-		types.PythonPkg: {Type: types.PythonPkg},
-		types.CondaPkg:  {Type: types.CondaPkg},
-		types.GemSpec:   {Type: types.GemSpec},
-		types.NodePkg:   {Type: types.NodePkg},
-		types.Jar:       {Type: types.Jar},
+		types.PythonPkg: {SrcType: types.PythonPkg, PkgType: types.PkgTypePyPI},
+		types.CondaPkg:  {SrcType: types.CondaPkg, PkgType: types.PkgTypeConda},
+		types.GemSpec:   {SrcType: types.GemSpec, PkgType: types.PkgTypeGem},
+		types.NodePkg:   {SrcType: types.NodePkg, PkgType: types.PkgTypeNPM},
+		types.JAR:       {SrcType: types.JAR, PkgType: types.PkgTypeMaven},
 	}
 
 	for _, app := range detail.Applications {
-		a, ok := aggregatedApps[app.Type]
+		a, ok := aggregatedApps[app.SrcType]
 		if !ok {
 			apps = append(apps, app)
 			continue

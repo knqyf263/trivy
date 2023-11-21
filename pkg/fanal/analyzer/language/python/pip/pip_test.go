@@ -25,7 +25,8 @@ func Test_pipAnalyzer_Analyze(t *testing.T) {
 			want: &analyzer.AnalysisResult{
 				Applications: []types.Application{
 					{
-						Type:     types.Pip,
+						SrcType:  types.Pip,
+						PkgType:  types.PkgTypePyPI,
 						FilePath: "testdata/requirements.txt",
 						Libraries: types.Packages{
 							{
