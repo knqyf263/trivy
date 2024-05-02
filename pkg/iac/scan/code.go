@@ -2,7 +2,6 @@ package scan
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io/fs"
 	"path/filepath"
@@ -111,7 +110,7 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 		opt(&settings)
 	}
 
-	srcFS := r.Metadata().Range().GetFS()
+	srcFS := r.Range().GetFS()
 	if srcFS == nil {
 		return nil, fmt.Errorf("code unavailable: result was not mapped to a known filesystem")
 	}
@@ -140,51 +139,31 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 	slashed := filepath.ToSlash(r.fsPath)
 	slashed = strings.TrimPrefix(slashed, "/")
 
-	content, err := fs.ReadFile(srcFS, slashed)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file from result filesystem (%#v): %w", srcFS, err)
-	}
-
 	hasAnnotation := r.Annotation() != ""
+
+	numLines, err := countLines(srcFS, slashed)
+	if err != nil {
+		return nil, err
+	}
 
 	code := Code{
 		Lines: nil,
 	}
 
-	var rawLines []string
-	bs := bufio.NewScanner(bytes.NewReader(content))
-	for bs.Scan() {
-		rawLines = append(rawLines, bs.Text())
-	}
-	if bs.Err() != nil {
-		return nil, fmt.Errorf("failed to scan file : %w", err)
-	}
-
-	var highlightedLines []string
-	if settings.includeHighlighted {
-		highlightedLines = highlight(iacTypes.CreateFSKey(innerRange.GetFS()), innerRange.GetLocalFilename(), content, settings.theme)
-		if len(highlightedLines) < len(rawLines) {
-			highlightedLines = rawLines
-		}
-	} else {
-		highlightedLines = make([]string, len(rawLines))
-	}
-
-	if outerRange.GetEndLine()-1 >= len(rawLines) || innerRange.GetStartLine() == 0 {
+	if outerRange.GetEndLine()-1 >= numLines || innerRange.GetStartLine() == 0 {
 		return nil, fmt.Errorf("invalid line number")
 	}
 
 	shrink := settings.allowTruncation && outerRange.LineCount() > (innerRange.LineCount()+10)
-
 	if shrink {
 
 		if outerRange.GetStartLine() < innerRange.GetStartLine() {
 			code.Lines = append(
 				code.Lines,
 				Line{
-					Content:     rawLines[outerRange.GetStartLine()-1],
-					Highlighted: highlightedLines[outerRange.GetStartLine()-1],
-					Number:      outerRange.GetStartLine(),
+					//Content:     rawLines[outerRange.GetStartLine()-1],
+					//Highlighted: highlightedLines[outerRange.GetStartLine()-1],
+					Number: outerRange.GetStartLine(),
 				},
 			)
 			if outerRange.GetStartLine()+1 < innerRange.GetStartLine() {
@@ -200,15 +179,15 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 
 		for lineNo := innerRange.GetStartLine(); lineNo <= innerRange.GetEndLine(); lineNo++ {
 
-			if lineNo-1 >= len(rawLines) || lineNo-1 >= len(highlightedLines) {
+			if lineNo-1 >= numLines {
 				break
 			}
 
 			line := Line{
-				Number:      lineNo,
-				Content:     strings.TrimSuffix(rawLines[lineNo-1], "\r"),
-				Highlighted: strings.TrimSuffix(highlightedLines[lineNo-1], "\r"),
-				IsCause:     true,
+				Number: lineNo,
+				//Content:     strings.TrimSuffix(rawLines[lineNo-1], "\r"),
+				//Highlighted: strings.TrimSuffix(highlightedLines[lineNo-1], "\r"),
+				IsCause: true,
 			}
 
 			if hasAnnotation && lineNo == innerRange.GetStartLine() {
@@ -231,9 +210,9 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 			code.Lines = append(
 				code.Lines,
 				Line{
-					Content:     rawLines[outerRange.GetEndLine()-1],
-					Highlighted: highlightedLines[outerRange.GetEndLine()-1],
-					Number:      outerRange.GetEndLine(),
+					//Content:     rawLines[outerRange.GetEndLine()-1],
+					//Highlighted: highlightedLines[outerRange.GetEndLine()-1],
+					Number: outerRange.GetEndLine(),
 				},
 			)
 
@@ -243,10 +222,10 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 		for lineNo := outerRange.GetStartLine(); lineNo <= outerRange.GetEndLine(); lineNo++ {
 
 			line := Line{
-				Number:      lineNo,
-				Content:     strings.TrimSuffix(rawLines[lineNo-1], "\r"),
-				Highlighted: strings.TrimSuffix(highlightedLines[lineNo-1], "\r"),
-				IsCause:     lineNo >= innerRange.GetStartLine() && lineNo <= innerRange.GetEndLine(),
+				Number: lineNo,
+				//Content:     strings.TrimSuffix(rawLines[lineNo-1], "\r"),
+				//Highlighted: strings.TrimSuffix(highlightedLines[lineNo-1], "\r"),
+				IsCause: lineNo >= innerRange.GetStartLine() && lineNo <= innerRange.GetEndLine(),
 			}
 
 			if hasAnnotation && lineNo == innerRange.GetStartLine() {
@@ -290,5 +269,98 @@ func (r *Result) GetCode(opts ...CodeOption) (*Code, error) {
 		code.Lines[len(code.Lines)-1].LastCause = true
 	}
 
+	if err = fillContent(srcFS, slashed, innerRange.GetLocalFilename(), &code, settings); err != nil {
+		return nil, err
+	}
+
 	return &code, nil
+}
+
+func countLines(srcFS fs.FS, name string) (int, error) {
+	f, err := srcFS.Open(name)
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	var lineCount int
+	for scanner.Scan() {
+		lineCount++
+	}
+
+	if err = scanner.Err(); err != nil {
+		return 0, err
+	}
+
+	return lineCount, nil
+}
+
+func findFirstAndLastLine(code *Code) (int, int) {
+	var firstLine, lastLine int
+	for _, line := range code.Lines {
+		if line.Truncated {
+			continue
+		}
+		if firstLine == 0 {
+			firstLine = line.Number
+		}
+		if lastLine < line.Number {
+			lastLine = line.Number
+		}
+	}
+	return firstLine, lastLine
+}
+
+// readLines reads the lines of the file in the range
+func readLines(srcFS fs.FS, srcPath string, firstLine, lastLine int) ([]string, error) {
+	f, err := srcFS.Open(srcPath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var content []string
+	lineNumber := 1 // Line number starts from 1
+	bs := bufio.NewScanner(f)
+	for bs.Scan() {
+		if firstLine <= lineNumber && lineNumber <= lastLine {
+			content = append(content, bs.Text())
+		}
+		lineNumber++
+	}
+	return content, nil
+}
+
+func highlightLines(srcFS fs.FS, localFileName string, lines []string, firstLine, lastLine int, settings codeSettings) []string {
+	var highlightedLines []string
+	if settings.includeHighlighted {
+		highlightedLines = highlight(iacTypes.CreateFSKey(srcFS), localFileName, lines, firstLine, lastLine, settings.theme)
+		if len(highlightedLines) < len(lines) {
+			highlightedLines = lines
+		}
+	} else {
+		highlightedLines = make([]string, len(lines))
+	}
+	return highlightedLines
+}
+
+func fillContent(srcFS fs.FS, srcPath, localFileName string, code *Code, settings codeSettings) error {
+	firstLine, lastLine := findFirstAndLastLine(code)
+
+	lines, err := readLines(srcFS, srcPath, firstLine, lastLine)
+	if err != nil {
+		return err
+	}
+
+	highlightedLines := highlightLines(srcFS, localFileName, lines, firstLine, lastLine, settings)
+
+	for i, line := range code.Lines {
+		if line.Truncated {
+			continue
+		}
+		code.Lines[i].Content = lines[line.Number-firstLine]
+		code.Lines[i].Highlighted = highlightedLines[line.Number-firstLine]
+	}
+	return nil
 }
