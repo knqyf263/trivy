@@ -137,7 +137,7 @@
                   "IsCause": true,
                   "Annotation": "",
                   "Truncated": false,
-                  "Highlighted": "\u001b[0m            \u001b[38;5;33mrunAsUser\u001b[0m: \u001b[38;5;37m10001",
+                  "Highlighted": "\u001b[0m            \u001b[38;5;33mrunAsUser\u001b[0m: \u001b[38;5;37m10001\u001b[0m",
                   "FirstCause": false,
                   "LastCause": true
                 },
@@ -265,7 +265,7 @@
                   "IsCause": true,
                   "Annotation": "",
                   "Truncated": false,
-                  "Highlighted": "\u001b[0m            \u001b[38;5;33mrunAsUser\u001b[0m: \u001b[38;5;37m10001",
+                  "Highlighted": "\u001b[0m            \u001b[38;5;33mrunAsUser\u001b[0m: \u001b[38;5;37m10001\u001b[0m",
                   "FirstCause": false,
                   "LastCause": true
                 },
