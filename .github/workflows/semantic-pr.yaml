@@ -28,6 +28,7 @@ jobs:
             ci
             chore
             revert
+            backport
             BREAKING
 
           scopes: |
