@@ -21,7 +21,7 @@ func main() {
 		if errors.As(err, &exitError) {
 			os.Exit(exitError.Code)
 		}
-		log.Fatal("Fatal error", log.Err(err))
+		log.Fatal("Fatal error!", log.Err(err))
 	}
 }
 
