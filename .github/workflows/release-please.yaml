@@ -1,36 +1,36 @@
 name: Release Please
+
 on:
   push:
     branches:
       - main
+      - 'release/v*'
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.6
-      - uses: googleapis/release-please-action@v4
+        uses: actions/checkout@v4
+
+      - name: Release Please
         id: release
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.PAT }}
-      - name: tag major and minor versions
-        run: |
-          echo ${{ steps.release.outputs.tag_name }}
-          echo ${{ steps.release.outputs.minor }}
+
+      # Since skip-github-release is specified, the outputs of googleapis/release-please-action cannot be used.
+      # Therefore, we need to parse the version manually.
       - name: Extract version from commit message
-        if: startsWith(github.event.head_commit.message, 'release:') # release-please-action doesn't output the version as it skips GitHub Release.
+        if: startsWith(github.event.head_commit.message, 'release:')
         id: extract_version
+        shell: bash
         run: |
-          echo "version=$(echo "${{ github.event.head_commit.message }}" | sed -n 's/^release: v\(.*\) \[.*\]$/\1/p')" >> $GITHUB_OUTPUT
+          echo "version=$( echo "${{ github.event.head_commit.message }}" | sed -n 's/^release: v\(.*\) \[.*\]$/\1/p' )" >> $GITHUB_OUTPUT
+
       - name: Tag release
         if: steps.extract_version.outputs.version
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.PAT }}
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/v${{ steps.extract_version.outputs.version }}',
-              sha: context.sha
-            })
+        shell: bash
+        run: |
+          git tag v${{ steps.extract_version.outputs.version }}
+          git push origin v${{ steps.extract_version.outputs.version }}
