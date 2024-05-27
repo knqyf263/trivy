@@ -35,7 +35,8 @@ jobs:
         run: |
           release-please release-pr --repo-url=${{ github.server_url }}/${{ github.repository }} \
             --token=${{ secrets.PAT }} \
-            --release-as=${{ github.event.inputs.version }}
+            --release-as=${{ github.event.inputs.version }} \
+            --target-branch=${{ github.ref_name }}
 
   release-tag:
     runs-on: ubuntu-latest
