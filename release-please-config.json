@@ -5,6 +5,7 @@
   "bump-minor-pre-major": true,
   "skip-github-release": true,
   "pull-request-title-pattern": "release: v${version} [${branch}]",
+  "skip-labeling": true,
   "packages": {
     ".": {}
   }
