@@ -17,3 +17,20 @@ jobs:
         run: |
           echo ${{ steps.release.outputs.tag_name }}
           echo ${{ steps.release.outputs.minor }}
+      - name: Extract version from commit message
+        if: startsWith(github.event.head_commit.message, 'release:') # release-please-action doesn't output the version as it skips GitHub Release.
+        id: extract_version
+        run: |
+          echo "version=$(echo "${{ github.event.head_commit.message }}" | sed -n 's/^release: v\(.*\) \[.*\]$/\1/p')" >> $GITHUB_OUTPUT
+      - name: Tag release
+        if: steps.extract_version.outputs.version
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT }}
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/v${{ steps.extract_version.outputs.version }}',
+              sha: context.sha
+            })
