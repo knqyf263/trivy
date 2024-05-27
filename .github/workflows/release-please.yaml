@@ -1,0 +1,20 @@
+name: Release Please
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.PAT }}
+          release-type: go
+          bump-minor-pre-major: true
+      - uses: actions/checkout@v4
+      - name: tag major and minor versions
+        run: |
+          echo ${{ steps.release.outputs.tag_name }}
+          echo ${{ steps.release.outputs.minor }}
