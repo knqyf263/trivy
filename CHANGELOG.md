@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.54.0](https://github.com/knqyf263/trivy/compare/v0.52.5...v0.54.0) (2024-05-27)
+
+
+### Features
+
+* test12 ([29d94de](https://github.com/knqyf263/trivy/commit/29d94dec459cda96f5564540b09e2a979d4e52a7))
+* test13 ([2d404cc](https://github.com/knqyf263/trivy/commit/2d404ccf44f0273b3221d3e529243ad1ae725c3b))
+* test14 ([caf110b](https://github.com/knqyf263/trivy/commit/caf110bce982d391e139bb484b1d6e5b6c12b9ef))
+* test15 ([c4424ce](https://github.com/knqyf263/trivy/commit/c4424ce2235b1affdb42fe71c2955eca8c64976a))
+
+
+### Bug Fixes
+
+* test10 ([265aaaf](https://github.com/knqyf263/trivy/commit/265aaafe3bd7c5960be453afdb49c06bea06d4a7))
+* test16 ([e1bb9e1](https://github.com/knqyf263/trivy/commit/e1bb9e14b0f02712518afdd2a0eb9fb1c4ae51ea))
+
 ## [0.52.5](https://github.com/knqyf263/trivy/compare/v0.52.4...v0.52.5) (2024-05-27)
 
 
