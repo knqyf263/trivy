@@ -25,6 +25,7 @@ jobs:
           # To trigger subsequent workflows
           # cf. https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
           token: ${{ secrets.PAT }}
+          target-branch: ${{ github.ref_name }}
 
       # Since skip-github-release is specified, the outputs of googleapis/release-please-action cannot be used.
       # Therefore, we need to parse the version manually.
