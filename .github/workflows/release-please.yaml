@@ -12,11 +12,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # To trigger subsequent workflows
+          # cf. https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+          token: ${{ secrets.PAT }}
 
       - name: Release Please
         id: release
         uses: googleapis/release-please-action@v4
         with:
+          # To trigger subsequent workflows
+          # cf. https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
           token: ${{ secrets.PAT }}
 
       # Since skip-github-release is specified, the outputs of googleapis/release-please-action cannot be used.
