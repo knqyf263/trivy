@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - 'release/v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: 'Release version (e.g., 0.51.0)'
+        type: string
 
 jobs:
   release-please:
@@ -17,6 +23,14 @@ jobs:
           # cf. https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
           token: ${{ secrets.PAT }}
 
+      - name: Set manual release version
+        if: ${{ github.event.inputs.version }}
+        id: manual_release
+        shell: bash
+        run: |
+          jq --arg version "${{ github.event.inputs.version }}" '.["release-as"] = $version' release-please-config.json > release-please-config.tmp.json
+          mv release-please-config.tmp.json release-please-config.json
+ 
       - name: Release Please
         if: startsWith(github.event.head_commit.message, 'release:') != true
         id: release
