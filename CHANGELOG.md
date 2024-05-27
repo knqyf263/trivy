@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.52.6](https://github.com/knqyf263/trivy/compare/v0.52.5...v0.52.6) (2024-05-27)
+
+
+### Bug Fixes
+
+* test11 ([1ea0228](https://github.com/knqyf263/trivy/commit/1ea022867e002594bb6219c1d9bf73418884aa6a))
+
 ## [0.52.5](https://github.com/knqyf263/trivy/compare/v0.52.4...v0.52.5) (2024-05-27)
 
 
