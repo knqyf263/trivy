@@ -7,13 +7,12 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.6
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.PAT }}
-          release-type: go
-          bump-minor-pre-major: true
-      - uses: actions/checkout@v4
       - name: tag major and minor versions
         run: |
           echo ${{ steps.release.outputs.tag_name }}
