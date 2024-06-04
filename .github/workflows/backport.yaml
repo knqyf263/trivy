@@ -7,9 +7,24 @@ on:
 jobs:
   backport:
     name: Backport PR
+    # Only run the job if the pull request has been merged
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - name: Check for specific label prefix
+        id: label_check
+        env:
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          echo "Found labels: $LABELS"
+          if echo "$LABELS" | jq 'any(startswith("backport-to-"))'; then
+            echo "match=true" >> $GITHUB_OUTPUT
+          else
+            echo "match=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Backport Action
+        if: steps.label_check.outputs.match == 'true'
         uses: sorenlouv/backport-github-action@v9.5.1
         with:
           github_token: ${{ secrets.ORG_REPO_TOKEN }}
