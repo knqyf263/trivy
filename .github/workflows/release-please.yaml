@@ -64,6 +64,23 @@ jobs:
               sha: context.sha
             });
 
+      # When v0.50.0 is released, a release branch "release/v0.50" is created.
+      - name: Create release branch for patch versions
+        if: ${{ endsWith(steps.extract_info.outputs.version, '.0') }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ORG_REPO_TOKEN }}
+          script: |
+            const version = '${{ steps.extract_info.outputs.version }}';
+            const minorVersion = version.slice(0, version.lastIndexOf('.'));
+            const releaseBranch = `release/v${minorVersion}`;
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/heads/${releaseBranch}`,
+              sha: context.sha
+            });
+
       # Since skip-github-release is specified, googleapis/release-please-action doesn't delete the label from PR.
       # This label prevents the subsequent PRs from being created. Therefore, we need to delete it ourselves.
       # cf. https://github.com/googleapis/release-please?tab=readme-ov-file#release-please-bot-does-not-create-a-release-pr-why
