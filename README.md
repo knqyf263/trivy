@@ -148,4 +148,8 @@ Please ensure to abide by our [Code of Conduct][code-of-conduct] during all inte
 [aquasec]: https://aquasec.com
 [oss]: https://www.aquasec.com/products/open-source-projects/
 [discussions]: https://github.com/aquasecurity/trivy/discussions
+<<<<<<< HEAD
 conflict
+=======
+test
+>>>>>>> 98c203700 (fix: test (#55))
