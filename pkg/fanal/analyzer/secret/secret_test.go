@@ -159,7 +159,7 @@ func TestSecretAnalyzer(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			a := secret.SecretAnalyzer{}
 			err := a.Init(analyzer.AnalyzerOptions{
-				SecretScannerOption: analyzer.SecretScannerOption{ConfigPath: tt.configPath},
+				SecretScannerOption: analyzer.SecretScannerOptions{ConfigPath: tt.configPath},
 			})
 			require.NoError(t, err)
 			content, err := os.Open(tt.filePath)
@@ -217,7 +217,7 @@ func TestSecretRequire(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			a := secret.SecretAnalyzer{}
 			err := a.Init(analyzer.AnalyzerOptions{
-				SecretScannerOption: analyzer.SecretScannerOption{
+				SecretScannerOption: analyzer.SecretScannerOptions{
 					ConfigPath: "testdata/skip-tests-config.yaml",
 				},
 			})

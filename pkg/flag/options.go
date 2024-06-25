@@ -3,6 +3,7 @@ package flag
 import (
 	"context"
 	"fmt"
+	"github.com/aquasecurity/trivy/pkg/fanal/secret"
 	"io"
 	"os"
 	"slices"
@@ -338,7 +339,7 @@ type Options struct {
 	ReportOptions
 	SBOMOptions
 	ScanOptions
-	SecretOptions
+	secret.ScannerOptions
 	VulnerabilityOptions
 
 	// Trivy's version, not populated via CLI flags
@@ -486,63 +487,30 @@ func (o *Options) outputPluginWriter(ctx context.Context) (io.Writer, func() err
 
 // groups returns all the flag groups other than global flags
 func (f *Flags) groups() []FlagGroup {
-	var groups []FlagGroup
 	// This order affects the usage message, so they are sorted by frequency of use.
-	if f.ScanFlagGroup != nil {
-		groups = append(groups, f.ScanFlagGroup)
+	groups := []FlagGroup{
+		f.ScanFlagGroup,
+		f.ReportFlagGroup,
+		f.CacheFlagGroup,
+		f.DBFlagGroup,
+		f.RegistryFlagGroup,
+		f.ImageFlagGroup,
+		f.SBOMFlagGroup,
+		f.VulnerabilityFlagGroup,
+		f.MisconfFlagGroup,
+		f.ModuleFlagGroup,
+		f.SecretFlagGroup,
+		f.LicenseFlagGroup,
+		f.RegoFlagGroup,
+		f.CloudFlagGroup,
+		f.AWSFlagGroup,
+		f.K8sFlagGroup,
+		f.RemoteFlagGroup,
+		f.RepoFlagGroup,
 	}
-	if f.ReportFlagGroup != nil {
-		groups = append(groups, f.ReportFlagGroup)
-	}
-	if f.CacheFlagGroup != nil {
-		groups = append(groups, f.CacheFlagGroup)
-	}
-	if f.DBFlagGroup != nil {
-		groups = append(groups, f.DBFlagGroup)
-	}
-	if f.RegistryFlagGroup != nil {
-		groups = append(groups, f.RegistryFlagGroup)
-	}
-	if f.ImageFlagGroup != nil {
-		groups = append(groups, f.ImageFlagGroup)
-	}
-	if f.SBOMFlagGroup != nil {
-		groups = append(groups, f.SBOMFlagGroup)
-	}
-	if f.VulnerabilityFlagGroup != nil {
-		groups = append(groups, f.VulnerabilityFlagGroup)
-	}
-	if f.MisconfFlagGroup != nil {
-		groups = append(groups, f.MisconfFlagGroup)
-	}
-	if f.ModuleFlagGroup != nil {
-		groups = append(groups, f.ModuleFlagGroup)
-	}
-	if f.SecretFlagGroup != nil {
-		groups = append(groups, f.SecretFlagGroup)
-	}
-	if f.LicenseFlagGroup != nil {
-		groups = append(groups, f.LicenseFlagGroup)
-	}
-	if f.RegoFlagGroup != nil {
-		groups = append(groups, f.RegoFlagGroup)
-	}
-	if f.CloudFlagGroup != nil {
-		groups = append(groups, f.CloudFlagGroup)
-	}
-	if f.AWSFlagGroup != nil {
-		groups = append(groups, f.AWSFlagGroup)
-	}
-	if f.K8sFlagGroup != nil {
-		groups = append(groups, f.K8sFlagGroup)
-	}
-	if f.RemoteFlagGroup != nil {
-		groups = append(groups, f.RemoteFlagGroup)
-	}
-	if f.RepoFlagGroup != nil {
-		groups = append(groups, f.RepoFlagGroup)
-	}
-	return groups
+	return lo.Filter(groups, func(group FlagGroup, _ int) bool {
+		return group != nil
+	})
 }
 
 func (f *Flags) AddFlags(cmd *cobra.Command) {
@@ -603,6 +571,11 @@ func (f *Flags) ToOptions(args []string) (Options, error) {
 	var err error
 	opts := Options{
 		AppVersion: app.Version(),
+	}
+	for _, g := range f.groups() {
+		if err = parseFlags(g); err != nil {
+			return Options{}, xerrors.Errorf("parse flags error: %w", err)
+		}
 	}
 
 	if f.GlobalFlagGroup != nil {
@@ -721,13 +694,6 @@ func (f *Flags) ToOptions(args []string) (Options, error) {
 		opts.ScanOptions, err = f.ScanFlagGroup.ToOptions(args)
 		if err != nil {
 			return Options{}, xerrors.Errorf("scan flag error: %w", err)
-		}
-	}
-
-	if f.SecretFlagGroup != nil {
-		opts.SecretOptions, err = f.SecretFlagGroup.ToOptions()
-		if err != nil {
-			return Options{}, xerrors.Errorf("secret flag error: %w", err)
 		}
 	}
 

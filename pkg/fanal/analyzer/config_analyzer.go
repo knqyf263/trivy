@@ -2,6 +2,7 @@ package analyzer
 
 import (
 	"context"
+	"github.com/aquasecurity/trivy/pkg/fanal/secret"
 	"slices"
 
 	v1 "github.com/google/go-containerregistry/pkg/v1"
@@ -39,7 +40,7 @@ type ConfigAnalyzerOptions struct {
 	FilePatterns         []string
 	DisabledAnalyzers    []Type
 	MisconfScannerOption misconf.ScannerOption
-	SecretScannerOption  SecretScannerOption
+	SecretScannerOption  secret.ScannerOptions
 }
 
 type ConfigAnalysisInput struct {

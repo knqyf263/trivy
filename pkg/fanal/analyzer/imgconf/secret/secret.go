@@ -24,8 +24,7 @@ type secretAnalyzer struct {
 }
 
 func newSecretAnalyzer(opts analyzer.ConfigAnalyzerOptions) (analyzer.ConfigAnalyzer, error) {
-	configPath := opts.SecretScannerOption.ConfigPath
-	c, err := secret.ParseConfig(configPath)
+	c, err := secret.ParseConfig(opts.SecretScannerOption.ConfigPath)
 	if err != nil {
 		return nil, xerrors.Errorf("secret config error: %w", err)
 	}

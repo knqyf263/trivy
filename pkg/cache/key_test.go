@@ -238,7 +238,7 @@ func TestCalcKey(t *testing.T) {
 					DataPaths:   tt.args.data,
 				},
 
-				SecretScannerOption: analyzer.SecretScannerOption{
+				SecretScannerOption: analyzer.SecretScannerOptions{
 					ConfigPath: tt.args.secretConfigPath,
 				},
 

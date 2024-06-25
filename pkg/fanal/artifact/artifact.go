@@ -2,6 +2,7 @@ package artifact
 
 import (
 	"context"
+	"github.com/aquasecurity/trivy/pkg/fanal/secret"
 	"sort"
 
 	"github.com/google/go-containerregistry/pkg/v1"
@@ -38,7 +39,7 @@ type Option struct {
 	ImageOption types.ImageOptions
 
 	MisconfScannerOption misconf.ScannerOption
-	SecretScannerOption  analyzer.SecretScannerOption
+	SecretScannerOption  secret.ScannerOptions
 	LicenseScannerOption analyzer.LicenseScannerOption
 
 	WalkerOption walker.Option

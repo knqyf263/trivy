@@ -3,6 +3,7 @@ package analyzer
 import (
 	"context"
 	"errors"
+	"github.com/aquasecurity/trivy/pkg/fanal/secret"
 	"io/fs"
 	"os"
 	"regexp"
@@ -45,12 +46,8 @@ type AnalyzerOptions struct {
 	FilePatterns         []string
 	DisabledAnalyzers    []Type
 	MisconfScannerOption misconf.ScannerOption
-	SecretScannerOption  SecretScannerOption
+	SecretScannerOption  secret.ScannerOptions
 	LicenseScannerOption LicenseScannerOption
-}
-
-type SecretScannerOption struct {
-	ConfigPath string
 }
 
 type LicenseScannerOption struct {

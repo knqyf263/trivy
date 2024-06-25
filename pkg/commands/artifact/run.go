@@ -656,9 +656,9 @@ func (r *runner) initScannerConfig(opts flag.Options) (ScannerConfig, types.Scan
 			MisconfScannerOption: configScannerOptions,
 
 			// For secret scanning
-			SecretScannerOption: analyzer.SecretScannerOption{
-				ConfigPath: opts.SecretConfigPath,
-			},
+			//SecretScannerOption: analyzer.SecretScannerOptions{
+			//	ConfigPath: opts.SecretConfigPath,
+			//},
 
 			// For license scanning
 			LicenseScannerOption: analyzer.LicenseScannerOption{

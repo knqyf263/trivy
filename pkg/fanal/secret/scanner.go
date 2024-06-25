@@ -20,6 +20,10 @@ import (
 
 var lineSep = []byte{'\n'}
 
+type ScannerOptions struct {
+	ConfigPath string
+}
+
 type Scanner struct {
 	logger *log.Logger
 	*Global
