@@ -15,7 +15,7 @@ on:
 jobs:
   # This job handles releases using Release Please, accommodating multiple commits
   # pushed to the main branch simultaneously due to merge queues. It ensures that
-  # release tags are applied specifically to the release commit, not just the latest commit..
+  # release tags are applied specifically to the release commit, not just the latest commit.
   check-release-commit:
     runs-on: ubuntu-latest
     outputs:
