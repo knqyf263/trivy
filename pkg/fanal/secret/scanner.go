@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"slices"
@@ -21,8 +22,14 @@ import (
 
 var lineSep = []byte{'\n'}
 
+const (
+	DefaultBufferSize = 64 * 1024 // 64KB default buffer size
+	DefaultOverlap    = 2048      // 2KB overlap for boundary handling
+)
+
 type Scanner struct {
-	logger *log.Logger
+	logger     *log.Logger
+	bufferSize int
 	*Global
 }
 
@@ -323,7 +330,8 @@ func NewScanner(config *Config) Scanner {
 	// Use the default rules
 	if config == nil {
 		return Scanner{
-			logger: logger,
+			logger:     logger,
+			bufferSize: DefaultBufferSize,
 			Global: &Global{
 				Rules:      builtinRules,
 				AllowRules: builtinAllowRules,
@@ -354,7 +362,8 @@ func NewScanner(config *Config) Scanner {
 	})
 
 	return Scanner{
-		logger: logger,
+		logger:     logger,
+		bufferSize: DefaultBufferSize,
 		Global: &Global{
 			Rules:        rules,
 			AllowRules:   allowRules,
@@ -363,9 +372,20 @@ func NewScanner(config *Config) Scanner {
 	}
 }
 
+// WithBufferSize configures the buffer size for streaming
+func (s Scanner) WithBufferSize(size int) Scanner {
+	s.bufferSize = size
+	return s
+}
+
+// GetBufferSize returns the current buffer size (for testing)
+func (s Scanner) GetBufferSize() int {
+	return s.bufferSize
+}
+
 type ScanArgs struct {
 	FilePath string
-	Content  []byte
+	Content  io.Reader
 	Binary   bool
 }
 
@@ -385,38 +405,130 @@ func (s *Scanner) Scan(args ScanArgs) types.Secret {
 		}
 	}
 
+	// Read the entire content from the reader
+	content, err := io.ReadAll(args.Content)
+	if err != nil {
+		logger.Error("Failed to read content", log.Err(err))
+		return types.Secret{
+			FilePath: args.FilePath,
+		}
+	}
+
+	// Use streaming approach for processing
+	result := s.scanContent(args.FilePath, content, args.Binary)
+	return result
+}
+
+func (s *Scanner) scanContent(filePath string, content []byte, binary bool) types.Secret {
+	// For small files or if buffer size is larger than content, process directly
+	if len(content) <= s.bufferSize {
+		return s.scanChunk(filePath, content, 0, binary)
+	}
+
+	// Stream large files in chunks
+	var allFindings []types.SecretFinding
+	overlap := DefaultOverlap
+	if overlap > s.bufferSize/4 {
+		overlap = s.bufferSize / 4
+	}
+
+	for offset := 0; offset < len(content); {
+		var chunkEnd int
+		
+		// Determine chunk boundaries
+		if offset+s.bufferSize >= len(content) {
+			chunkEnd = len(content)
+		} else {
+			chunkEnd = offset + s.bufferSize
+		}
+
+		chunk := content[offset:chunkEnd]
+		chunkResult := s.scanChunk(filePath, chunk, offset, binary)
+		
+		// Merge findings, adjusting line numbers for chunk offset
+		for _, finding := range chunkResult.Findings {
+			// Adjust line numbers based on chunk offset
+			if offset > 0 {
+				lineOffset := bytes.Count(content[:offset], lineSep)
+				finding.StartLine += lineOffset
+				finding.EndLine += lineOffset
+				
+				// Update code lines
+				for i := range finding.Code.Lines {
+					finding.Code.Lines[i].Number += lineOffset
+				}
+			}
+			allFindings = append(allFindings, finding)
+		}
+
+		// Move to next chunk with overlap handling
+		if chunkEnd >= len(content) {
+			break
+		}
+		
+		nextOffset := chunkEnd - overlap
+		if nextOffset <= offset {
+			nextOffset = offset + 1
+		}
+		offset = nextOffset
+	}
+
+	if len(allFindings) == 0 {
+		return types.Secret{}
+	}
+
+	// Remove duplicate findings that might occur at chunk boundaries
+	allFindings = s.deduplicateFindings(allFindings)
+
+	sort.Slice(allFindings, func(i, j int) bool {
+		if allFindings[i].RuleID != allFindings[j].RuleID {
+			return allFindings[i].RuleID < allFindings[j].RuleID
+		}
+		return allFindings[i].Match < allFindings[j].Match
+	})
+
+	return types.Secret{
+		FilePath: filePath,
+		Findings: allFindings,
+	}
+}
+
+func (s *Scanner) scanChunk(filePath string, content []byte, offset int, binary bool) types.Secret {
+	logger := s.logger.With("file_path", filePath)
+
 	var censored []byte
 	var copyCensored sync.Once
 	var matched []Match
 
 	var findings []types.SecretFinding
-	globalExcludedBlocks := newBlocks(args.Content, s.ExcludeBlock.Regexes)
+	globalExcludedBlocks := newBlocks(content, s.ExcludeBlock.Regexes)
+	
 	for _, rule := range s.Rules {
 		ruleLogger := logger.With("rule_id", rule.ID)
 		// Check if the file path should be scanned by this rule
-		if !rule.MatchPath(args.FilePath) {
+		if !rule.MatchPath(filePath) {
 			ruleLogger.Debug("Skipped secret scanning as non-compliant to the rule")
 			continue
 		}
 
 		// Check if the file path should be allowed
-		if rule.AllowPath(args.FilePath) {
+		if rule.AllowPath(filePath) {
 			ruleLogger.Debug("Skipped secret scanning as allowed")
 			continue
 		}
 
 		// Check if the file content contains keywords and should be scanned
-		if !rule.MatchKeywords(args.Content) {
+		if !rule.MatchKeywords(content) {
 			continue
 		}
 
 		// Detect secrets
-		locs := s.FindLocations(rule, args.Content)
+		locs := s.FindLocations(rule, content)
 		if len(locs) == 0 {
 			continue
 		}
 
-		localExcludedBlocks := newBlocks(args.Content, rule.ExcludeBlock.Regexes)
+		localExcludedBlocks := newBlocks(content, rule.ExcludeBlock.Regexes)
 
 		for _, loc := range locs {
 			// Skip the secret if it is within excluded blocks.
@@ -429,17 +541,18 @@ func (s *Scanner) Scan(args ScanArgs) types.Secret {
 				Location: loc,
 			})
 			copyCensored.Do(func() {
-				censored = make([]byte, len(args.Content))
-				copy(censored, args.Content)
+				censored = make([]byte, len(content))
+				copy(censored, content)
 			})
 			censored = censorLocation(loc, censored)
 		}
 	}
+	
 	for _, match := range matched {
 		finding := toFinding(match.Rule, match.Location, censored)
 		// Rewrite unreadable fields for binary files
-		if args.Binary {
-			finding.Match = fmt.Sprintf("Binary file %q matches a rule %q", args.FilePath, match.Rule.Title)
+		if binary {
+			finding.Match = fmt.Sprintf("Binary file %q matches a rule %q", filePath, match.Rule.Title)
 			finding.Code = types.Code{}
 		}
 		findings = append(findings, finding)
@@ -457,9 +570,24 @@ func (s *Scanner) Scan(args ScanArgs) types.Secret {
 	})
 
 	return types.Secret{
-		FilePath: args.FilePath,
+		FilePath: filePath,
 		Findings: findings,
 	}
+}
+
+func (s *Scanner) deduplicateFindings(findings []types.SecretFinding) []types.SecretFinding {
+	seen := make(map[string]bool)
+	var result []types.SecretFinding
+	
+	for _, finding := range findings {
+		key := fmt.Sprintf("%s:%d:%d:%s", finding.RuleID, finding.StartLine, finding.EndLine, finding.Match)
+		if !seen[key] {
+			seen[key] = true
+			result = append(result, finding)
+		}
+	}
+	
+	return result
 }
 
 func censorLocation(loc Location, input []byte) []byte {
