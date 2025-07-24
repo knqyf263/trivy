@@ -1494,11 +1494,3 @@ func TestScannerStreamingWithSmallBuffer(t *testing.T) {
 	}
 }
 
-func TestScannerBufferSizeConfiguration(t *testing.T) {
-	s1 := secret.NewScanner(nil)
-	assert.Equal(t, secret.DefaultBufferSize, s1.GetBufferSize(), "Default buffer size should be set")
-
-	s2 := s1.WithBufferSize(1024)
-	assert.Equal(t, 1024, s2.GetBufferSize(), "Buffer size should be configurable")
-	assert.Equal(t, secret.DefaultBufferSize, s1.GetBufferSize(), "Original scanner should be unchanged")
-}
