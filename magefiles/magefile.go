@@ -334,15 +334,23 @@ func (t Test) UpdateVMGolden() error {
 type Lint mg.Namespace
 
 // Run runs linters
-func (Lint) Run() error {
+func (l Lint) Run() error {
 	mg.Deps(Tool{}.GolangciLint)
-	return sh.RunV("golangci-lint", "run", "--build-tags=integration")
+	if err := sh.RunV("golangci-lint", "run", "--build-tags=integration"); err != nil {
+		return err
+	}
+	return l.Modernize()
 }
 
 // Fix auto fixes linters
 func (Lint) Fix() error {
 	mg.Deps(Tool{}.GolangciLint)
 	return sh.RunV("golangci-lint", "run", "--fix", "--build-tags=integration")
+}
+
+// Modernize runs modernize to simplify code by using modern constructs
+func (Lint) Modernize() error {
+	return sh.RunV("go", "run", "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize", "./...")
 }
 
 // Fmt formats Go code
