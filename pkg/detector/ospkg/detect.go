@@ -2,6 +2,7 @@ package ospkg
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -89,7 +90,8 @@ func Detect(ctx context.Context, _, osFamily ftypes.OSType, osName string, repo 
 		}
 		
 		// Filter packages unlikely to affect container images when requested
-		if opts.IgnoreUnlikelyAffected && isUnlikelyAffected(pkg) {
+		// Only apply filtering for container images, not VM or filesystem scans
+		if opts.IgnoreUnlikelyAffected && opts.ArtifactType == ftypes.TypeContainerImage && isUnlikelyAffected(pkg) {
 			return false
 		}
 		
@@ -122,7 +124,55 @@ func newDriver(osFamily ftypes.OSType, pkgs []ftypes.Package) (driver.Driver, er
 
 // isUnlikelyAffected checks if a package is unlikely to affect container images
 func isUnlikelyAffected(pkg ftypes.Package) bool {
-	// Filter packages with source name "linux" as they are typically kernel packages
-	// that don't affect containers since containers use the host's kernel
-	return pkg.SrcName == "linux"
+	// Filter kernel packages from different distributions
+	if isKernelPackage(pkg) {
+		return true
+	}
+	
+	// Filter documentation, license, and debug packages
+	if isDocumentationPackage(pkg.Name) {
+		return true
+	}
+	
+	return false
+}
+
+// isKernelPackage checks if a package is a kernel package across different distributions
+func isKernelPackage(pkg ftypes.Package) bool {
+	// Debian/Ubuntu: source name "linux"
+	if pkg.SrcName == "linux" {
+		return true
+	}
+	
+	// Red Hat/CentOS/RHEL: source name "kernel"
+	if pkg.SrcName == "kernel" {
+		return true
+	}
+	
+	// SUSE: kernel packages like "kernel-default", "kernel-source"
+	if strings.HasPrefix(pkg.SrcName, "kernel") {
+		return true
+	}
+	
+	return false
+}
+
+// isDocumentationPackage checks if a package is a documentation, license, or debug package
+func isDocumentationPackage(pkgName string) bool {
+	unlikelyPatterns := []string{
+		"-doc",
+		"-docs",
+		"-license",
+		"-dev", // development packages with headers but no runtime binaries
+		"-dbg",
+		"-debug",
+	}
+	
+	for _, pattern := range unlikelyPatterns {
+		if strings.HasSuffix(pkgName, pattern) {
+			return true
+		}
+	}
+	
+	return false
 }

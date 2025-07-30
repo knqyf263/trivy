@@ -126,6 +126,7 @@ type ScanOptions struct {
 	Distro                 types.OS // Forced OS
 	VulnSeveritySources    []dbTypes.SourceID
 	IgnoreUnlikelyAffected bool
+	ArtifactType           types.ArtifactType
 }
 
 // ScanResponse represents the response from the scan service

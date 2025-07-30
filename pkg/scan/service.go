@@ -172,6 +172,9 @@ func (s Service) ScanArtifact(ctx context.Context, options types.ScanOptions) (t
 		}
 	}()
 
+	// Set the artifact type in scan options for filtering logic
+	options.ArtifactType = artifactInfo.Type
+	
 	scanResponse, err := s.backend.Scan(ctx, artifactInfo.Name, artifactInfo.ID, artifactInfo.BlobIDs, options)
 	if err != nil {
 		return types.Report{}, xerrors.Errorf("scan failed: %w", err)
