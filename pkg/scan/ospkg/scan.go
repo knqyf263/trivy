@@ -51,7 +51,7 @@ func (s *scanner) Scan(ctx context.Context, target types.ScanTarget, opts types.
 	}
 
 	vulns, eosl, err := ospkgDetector.Detect(ctx, "", target.OS.Family, target.OS.Name, target.Repository, time.Time{},
-		target.Packages)
+		target.Packages, opts)
 	if err != nil {
 		// Return a result for those who want to override the error handling.
 		return result, false, xerrors.Errorf("failed vulnerability detection of OS packages: %w", err)

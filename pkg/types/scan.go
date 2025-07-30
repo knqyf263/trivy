@@ -114,17 +114,18 @@ type ScanTarget struct {
 
 // ScanOptions holds the attributes for scanning vulnerabilities/licenses
 type ScanOptions struct {
-	PkgTypes            []string
-	PkgRelationships    []types.Relationship
-	Scanners            Scanners
-	ImageConfigScanners Scanners // Scanners for container image configuration
-	ScanRemovedPackages bool
-	LicenseCategories   map[types.LicenseCategory][]string
-	LicenseFull         bool
-	FilePatterns        []string
-	IncludeDevDeps      bool
-	Distro              types.OS // Forced OS
-	VulnSeveritySources []dbTypes.SourceID
+	PkgTypes               []string
+	PkgRelationships       []types.Relationship
+	Scanners               Scanners
+	ImageConfigScanners    Scanners // Scanners for container image configuration
+	ScanRemovedPackages    bool
+	LicenseCategories      map[types.LicenseCategory][]string
+	LicenseFull            bool
+	FilePatterns           []string
+	IncludeDevDeps         bool
+	Distro                 types.OS // Forced OS
+	VulnSeveritySources    []dbTypes.SourceID
+	IgnoreUnlikelyAffected bool
 }
 
 // ScanResponse represents the response from the scan service

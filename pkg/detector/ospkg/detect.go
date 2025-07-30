@@ -71,7 +71,7 @@ func RegisterDriver(name ftypes.OSType, drv driver.Driver) {
 }
 
 // Detect detects the vulnerabilities
-func Detect(ctx context.Context, _, osFamily ftypes.OSType, osName string, repo *ftypes.Repository, _ time.Time, pkgs []ftypes.Package) ([]types.DetectedVulnerability, bool, error) {
+func Detect(ctx context.Context, _, osFamily ftypes.OSType, osName string, repo *ftypes.Repository, _ time.Time, pkgs []ftypes.Package, opts types.ScanOptions) ([]types.DetectedVulnerability, bool, error) {
 	ctx = log.WithContextPrefix(ctx, string(osFamily))
 
 	d, err := newDriver(osFamily, pkgs)
@@ -84,7 +84,16 @@ func Detect(ctx context.Context, _, osFamily ftypes.OSType, osName string, repo 
 	// Package `gpg-pubkey` doesn't use the correct version.
 	// We don't need to find vulnerabilities for this package.
 	filteredPkgs := lo.Filter(pkgs, func(pkg ftypes.Package, _ int) bool {
-		return pkg.Name != "gpg-pubkey"
+		if pkg.Name == "gpg-pubkey" {
+			return false
+		}
+		
+		// Filter packages unlikely to affect container images when requested
+		if opts.IgnoreUnlikelyAffected && isUnlikelyAffected(pkg) {
+			return false
+		}
+		
+		return true
 	})
 	vulns, err := d.Detect(ctx, osName, repo, filteredPkgs)
 	if err != nil {
@@ -109,4 +118,11 @@ func newDriver(osFamily ftypes.OSType, pkgs []ftypes.Package) (driver.Driver, er
 
 	log.Warn("Unsupported os", log.String("family", string(osFamily)))
 	return nil, ErrUnsupportedOS
+}
+
+// isUnlikelyAffected checks if a package is unlikely to affect container images
+func isUnlikelyAffected(pkg ftypes.Package) bool {
+	// Filter packages with source name "linux" as they are typically kernel packages
+	// that don't affect containers since containers use the host's kernel
+	return pkg.SrcName == "linux"
 }
