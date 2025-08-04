@@ -146,6 +146,58 @@ func TestScanner_Detect(t *testing.T) {
 			},
 		},
 		{
+			name:   "Binary version with root.io but source version without",
+			baseOS: ftypes.Debian,
+			fixtures: []string{
+				"testdata/fixtures/rootio.yaml",
+				"testdata/fixtures/data-source.yaml",
+			},
+			args: args{
+				osVer: "12",
+				pkgs: []ftypes.Package{
+					{
+						Name:       "openssl",
+						Version:    "3.0.15-1~deb12u1.root.io.0",  // Binary version has .root.io suffix
+						SrcName:    "openssl",
+						SrcVersion: "3.0.15-1~deb12u1",           // Source version lacks .root.io suffix
+					},
+				},
+			},
+			want: []types.DetectedVulnerability{
+				{
+					PkgName:          "openssl",
+					VulnerabilityID:  "CVE-2024-13176", // Should use binary version for vulnerability checking
+					InstalledVersion: "3.0.15-1~deb12u1.root.io.0",
+					FixedVersion:     "3.0.15-1~deb12u1.root.io.1, 3.0.16-1~deb12u1",
+					SeveritySource:   vulnerability.Debian,
+					DataSource: &dbTypes.DataSource{
+						ID:     vulnerability.RootIO,
+						BaseID: vulnerability.Debian,
+						Name:   "Root.io Security Patches (debian)",
+						URL:    "https://api.root.io/external/patch_feed",
+					},
+					Vulnerability: dbTypes.Vulnerability{
+						Severity: dbTypes.SeverityMedium.String(),
+					},
+				},
+				{
+					PkgName:          "openssl",
+					VulnerabilityID:  "CVE-2025-27587", // Should also detect from Debian data
+					InstalledVersion: "3.0.15-1~deb12u1.root.io.0",
+					FixedVersion:     "3.0.16-1~deb12u1",
+					SeveritySource:   vulnerability.Debian,
+					DataSource: &dbTypes.DataSource{
+						ID:   vulnerability.Debian,
+						Name: "Debian Security Tracker",
+						URL:  "https://salsa.debian.org/security-tracker-team/security-tracker",
+					},
+					Vulnerability: dbTypes.Vulnerability{
+						Severity: dbTypes.SeverityLow.String(),
+					},
+				},
+			},
+		},
+		{
 			name:   "Get returns an error",
 			baseOS: ftypes.Alpine,
 			fixtures: []string{

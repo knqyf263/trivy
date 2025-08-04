@@ -79,7 +79,7 @@ func (s *Scanner) Detect(ctx context.Context, osVer string, _ *ftypes.Repository
 		}
 
 		for _, adv := range advisories {
-			if !s.isVulnerable(ctx, utils.FormatSrcVersion(pkg), adv) {
+			if !s.isVulnerable(ctx, utils.FormatVersion(pkg), adv) {
 				continue
 			}
 			vuln := types.DetectedVulnerability{
