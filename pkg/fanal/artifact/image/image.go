@@ -103,7 +103,14 @@ func (a Artifact) Inspect(ctx context.Context) (ref artifact.Reference, err erro
 			log.Error("Failed to remove layer cache", log.Err(rerr))
 		}
 	}()
-	if err := a.checkImageSize(ctx, diffIDs); err != nil {
+
+	// Convert image ID and layer IDs to cache keys early for cache-aware size checking
+	imageKey, layerKeys, err := a.calcCacheKeys(imageID, diffIDs)
+	if err != nil {
+		return artifact.Reference{}, err
+	}
+
+	if err := a.checkImageSize(ctx, imageKey, layerKeys, diffIDs); err != nil {
 		return artifact.Reference{}, err
 	}
 
@@ -119,12 +126,6 @@ func (a Artifact) Inspect(ctx context.Context) (ref artifact.Reference, err erro
 	// Try to detect base layers.
 	baseDiffIDs := a.guessBaseLayers(diffIDs, configFile)
 	a.logger.Debug("Detected base layers", log.Any("diff_ids", baseDiffIDs))
-
-	// Convert image ID and layer IDs to cache keys
-	imageKey, layerKeys, err := a.calcCacheKeys(imageID, diffIDs)
-	if err != nil {
-		return artifact.Reference{}, err
-	}
 
 	// Parse histories and extract a list of "created_by"
 	layerKeyMap := a.consolidateCreatedBy(diffIDs, layerKeys, configFile)
@@ -227,7 +228,7 @@ func (a Artifact) imageSizeError(typ string, size int64) error {
 	}
 }
 
-func (a Artifact) checkImageSize(ctx context.Context, diffIDs []string) error {
+func (a Artifact) checkImageSize(ctx context.Context, imageKey string, layerKeys, diffIDs []string) error {
 	if a.artifactOption.ImageOption.MaxImageSize == 0 {
 		return nil
 	}
@@ -236,7 +237,7 @@ func (a Artifact) checkImageSize(ctx context.Context, diffIDs []string) error {
 		return xerrors.Errorf("failed to get compressed image size: %w", err)
 	}
 
-	if err := a.checkUncompressedImageSize(ctx, diffIDs); err != nil {
+	if err := a.checkUncompressedImageSize(ctx, layerKeys, diffIDs); err != nil {
 		return xerrors.Errorf("failed to calculate image size: %w", err)
 	}
 	return nil
@@ -269,28 +270,91 @@ func (a Artifact) checkCompressedImageSize(diffIDs []string) error {
 	return nil
 }
 
-func (a Artifact) checkUncompressedImageSize(ctx context.Context, diffIDs []string) error {
+func (a Artifact) checkUncompressedImageSize(ctx context.Context, layerKeys, diffIDs []string) error {
 	var totalSize int64
 
-	p := parallel.NewPipeline(a.artifactOption.Parallel, false, diffIDs,
-		func(_ context.Context, diffID string) (int64, error) {
-			layerSize, err := a.saveLayer(diffID)
-			if err != nil {
-				return -1, xerrors.Errorf("failed to save layer: %w", err)
-			}
-			return layerSize, nil
-		},
-		func(layerSize int64) error {
-			totalSize += layerSize
-			if totalSize > a.artifactOption.ImageOption.MaxImageSize {
-				return a.imageSizeError("uncompressed layers", totalSize)
-			}
-			return nil
-		},
-	)
+	// First, try to get cached sizes for existing layers
+	_, missingLayers, err := a.cache.MissingBlobs("", layerKeys)
+	if err != nil {
+		return xerrors.Errorf("unable to get missing layers: %w", err)
+	}
 
-	if err := p.Do(ctx); err != nil {
-		return xerrors.Errorf("pipeline error: %w", err)
+	missingLayerSet := make(map[string]bool)
+	for _, layer := range missingLayers {
+		missingLayerSet[layer] = true
+	}
+
+	// Calculate total size from cached layers
+	for i, layerKey := range layerKeys {
+		if missingLayerSet[layerKey] {
+			// Layer is missing, will need to download
+			continue
+		}
+
+		// Try to get cached size
+		localCache, ok := a.cache.(cache.LocalArtifactCache)
+		if !ok {
+			a.logger.Debug("Cache does not support GetBlob, will download",
+				log.String("layer_key", layerKey))
+			// Fall back to downloading this layer
+			missingLayerSet[layerKey] = true
+			continue
+		}
+
+		blobInfo, err := localCache.GetBlob(layerKey)
+		if err != nil {
+			a.logger.Debug("Failed to get cached layer size, will download",
+				log.String("layer_key", layerKey), log.Err(err))
+			// Fall back to downloading this layer
+			missingLayerSet[layerKey] = true
+			continue
+		}
+
+		a.logger.Debug("Using cached layer size",
+			log.String("diff_id", diffIDs[i]), log.Int64("size", blobInfo.Size))
+		totalSize += blobInfo.Size
+
+		// Early exit if size already exceeds limit
+		if totalSize > a.artifactOption.ImageOption.MaxImageSize {
+			return a.imageSizeError("uncompressed layers", totalSize)
+		}
+	}
+
+	// Process only the missing layers that need to be downloaded
+	var missingDiffIDs []string
+	for i, layerKey := range layerKeys {
+		if missingLayerSet[layerKey] {
+			missingDiffIDs = append(missingDiffIDs, diffIDs[i])
+		}
+	}
+
+	if len(missingDiffIDs) > 0 {
+		a.logger.Debug("Downloading missing layers for size calculation",
+			log.Int("cached_layers", len(diffIDs)-len(missingDiffIDs)),
+			log.Int("missing_layers", len(missingDiffIDs)))
+
+		p := parallel.NewPipeline(a.artifactOption.Parallel, false, missingDiffIDs,
+			func(_ context.Context, diffID string) (int64, error) {
+				layerSize, err := a.saveLayer(diffID)
+				if err != nil {
+					return -1, xerrors.Errorf("failed to save layer: %w", err)
+				}
+				return layerSize, nil
+			},
+			func(layerSize int64) error {
+				totalSize += layerSize
+				if totalSize > a.artifactOption.ImageOption.MaxImageSize {
+					return a.imageSizeError("uncompressed layers", totalSize)
+				}
+				return nil
+			},
+		)
+
+		if err := p.Do(ctx); err != nil {
+			return xerrors.Errorf("pipeline error: %w", err)
+		}
+	} else {
+		a.logger.Debug("All layer sizes retrieved from cache")
 	}
 
 	return nil
