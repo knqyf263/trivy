@@ -13,7 +13,7 @@ import (
 // Report represents a scan result
 type Report struct {
 	SchemaVersion int                 `json:",omitempty"`
-	VersionInfo   *version.VersionInfo `json:",omitempty"`
+	VersionInfo   version.VersionInfo  `json:",omitzero"`
 	CreatedAt     time.Time           `json:",omitzero"`
 	ArtifactName  string              `json:",omitempty"`
 	ArtifactType  ftypes.ArtifactType `json:",omitempty"`

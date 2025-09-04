@@ -690,10 +690,22 @@ func (r *runner) scan(ctx context.Context, opts flag.Options, initializeService 
 	versionInfo := version.NewVersionInfo(opts.CacheDir)
 	vulnScannerEnabled := scanOptions.Scanners.Enabled(types.VulnerabilityScanner)
 	misconfigScannerEnabled := scanOptions.Scanners.AnyEnabled(types.MisconfigScanner, types.RBACScanner)
-	filteredVersionInfo := version.FilterVersionInfo(versionInfo, vulnScannerEnabled, misconfigScannerEnabled)
-	report.VersionInfo = &filteredVersionInfo
+	javaDBUsed := isJavaDBUsed(report)
+	filteredVersionInfo := version.FilterVersionInfo(versionInfo, vulnScannerEnabled, misconfigScannerEnabled, javaDBUsed)
+	report.VersionInfo = filteredVersionInfo
 
 	return report, nil
+}
+
+// isJavaDBUsed checks if JavaDB was actually used by looking for Java applications in the results
+func isJavaDBUsed(report types.Report) bool {
+	for _, result := range report.Results {
+		// Check if the result type is Jar, which indicates JavaDB was used
+		if result.Type == ftypes.Jar {
+			return true
+		}
+	}
+	return false
 }
 
 func initMisconfScannerOption(ctx context.Context, opts flag.Options) (misconf.ScannerOption, error) {

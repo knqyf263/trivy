@@ -102,15 +102,19 @@ func NewVersionInfo(cacheDir string) VersionInfo {
 	}
 }
 
-// FilterVersionInfo filters version information based on enabled scanners
-func FilterVersionInfo(vi VersionInfo, vulnScannerEnabled, misconfigScannerEnabled bool) VersionInfo {
+// FilterVersionInfo filters version information based on enabled scanners and actual usage
+func FilterVersionInfo(vi VersionInfo, vulnScannerEnabled, misconfigScannerEnabled, javaDBUsed bool) VersionInfo {
 	filtered := VersionInfo{
 		Version: vi.Version, // Always include Trivy version
 	}
 
-	// Include trivy-db and trivy-java-db versions for vulnerability scanner
+	// Include trivy-db for vulnerability scanner
 	if vulnScannerEnabled {
 		filtered.VulnerabilityDB = vi.VulnerabilityDB
+	}
+
+	// Include trivy-java-db only if actually used (Java packages were found)
+	if vulnScannerEnabled && javaDBUsed {
 		filtered.JavaDB = vi.JavaDB
 	}
 
@@ -121,3 +125,4 @@ func FilterVersionInfo(vi VersionInfo, vulnScannerEnabled, misconfigScannerEnabl
 
 	return filtered
 }
+
