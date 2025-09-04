@@ -34,6 +34,7 @@ import (
 	"github.com/aquasecurity/trivy/pkg/rpc/client"
 	"github.com/aquasecurity/trivy/pkg/scan"
 	"github.com/aquasecurity/trivy/pkg/types"
+	"github.com/aquasecurity/trivy/pkg/version"
 	"github.com/aquasecurity/trivy/pkg/version/doc"
 	xhttp "github.com/aquasecurity/trivy/pkg/x/http"
 	xstrings "github.com/aquasecurity/trivy/pkg/x/strings"
@@ -684,6 +685,14 @@ func (r *runner) scan(ctx context.Context, opts flag.Options, initializeService 
 	if err != nil {
 		return types.Report{}, xerrors.Errorf("scan failed: %w", err)
 	}
+
+	// Add version information to the report
+	versionInfo := version.NewVersionInfo(opts.CacheDir)
+	vulnScannerEnabled := scanOptions.Scanners.Enabled(types.VulnerabilityScanner)
+	misconfigScannerEnabled := scanOptions.Scanners.AnyEnabled(types.MisconfigScanner, types.RBACScanner)
+	filteredVersionInfo := version.FilterVersionInfo(versionInfo, vulnScannerEnabled, misconfigScannerEnabled)
+	report.VersionInfo = &filteredVersionInfo
+
 	return report, nil
 }
 

@@ -101,3 +101,23 @@ func NewVersionInfo(cacheDir string) VersionInfo {
 		CheckBundle:     pbMeta,
 	}
 }
+
+// FilterVersionInfo filters version information based on enabled scanners
+func FilterVersionInfo(vi VersionInfo, vulnScannerEnabled, misconfigScannerEnabled bool) VersionInfo {
+	filtered := VersionInfo{
+		Version: vi.Version, // Always include Trivy version
+	}
+
+	// Include trivy-db and trivy-java-db versions for vulnerability scanner
+	if vulnScannerEnabled {
+		filtered.VulnerabilityDB = vi.VulnerabilityDB
+		filtered.JavaDB = vi.JavaDB
+	}
+
+	// Include trivy-checks for misconfig scanner and misconfig image-config-scanner
+	if misconfigScannerEnabled {
+		filtered.CheckBundle = vi.CheckBundle
+	}
+
+	return filtered
+}

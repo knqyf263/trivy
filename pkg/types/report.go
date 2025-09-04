@@ -7,11 +7,13 @@ import (
 
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/aquasecurity/trivy/pkg/sbom/core"
+	"github.com/aquasecurity/trivy/pkg/version"
 )
 
 // Report represents a scan result
 type Report struct {
 	SchemaVersion int                 `json:",omitempty"`
+	VersionInfo   *version.VersionInfo `json:",omitempty"`
 	CreatedAt     time.Time           `json:",omitzero"`
 	ArtifactName  string              `json:",omitempty"`
 	ArtifactType  ftypes.ArtifactType `json:",omitempty"`
