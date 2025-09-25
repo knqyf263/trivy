@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/aquasecurity/trivy/pkg/extension"
+	"github.com/aquasecurity/trivy/internal/extension"
 	"github.com/aquasecurity/trivy/pkg/flag"
 	"github.com/aquasecurity/trivy/pkg/types"
 )
