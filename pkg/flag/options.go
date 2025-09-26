@@ -588,6 +588,8 @@ func (o *Options) outputPluginWriter(ctx context.Context) (io.Writer, func() err
 		Stdin: pr,
 	})
 	if err != nil {
+		pr.Close()
+		pw.Close()
 		return nil, nil, xerrors.Errorf("plugin start: %w", err)
 	}
 

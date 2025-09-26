@@ -43,12 +43,14 @@ func newFile(filePath string, storage Storage) (*ImageFile, error) {
 
 	c, err := lru.New[string, []byte](storageFILECacheSize)
 	if err != nil {
+		f.Close()
 		return nil, xerrors.Errorf("failed to create new lru cache: %w", err)
 	}
 
 	reader, err := disk.New(f, c)
 	if err != nil {
 		if errors.Is(err, vm.ErrUnsupportedType) {
+			f.Close()
 			return nil, err
 		}
 
@@ -57,6 +59,7 @@ func newFile(filePath string, storage Storage) (*ImageFile, error) {
 		logger.Debug("Assume raw image")
 		fi, err := f.Stat()
 		if err != nil {
+			f.Close()
 			return nil, xerrors.Errorf("file stat error: %w", err)
 		}
 		reader = io.NewSectionReader(f, 0, fi.Size())
