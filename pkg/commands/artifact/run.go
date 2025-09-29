@@ -57,13 +57,14 @@ var (
 )
 
 // InitializeScanService defines the initialize function signature of scan service
-type InitializeScanService func(context.Context, ScannerConfig, cache.Cache) (scan.Service, func(), error)
+type InitializeScanService func(context.Context, ScannerConfig) (scan.Service, func(), error)
 
 type ScannerConfig struct {
 	// e.g. image name and file path
 	Target string
 
 	// Cache
+	Cache              cache.Cache
 	CacheOptions       cache.Options
 	RemoteCacheOptions cache.RemoteOptions
 
@@ -702,7 +703,10 @@ func (r *runner) scan(ctx context.Context, opts flag.Options, initializeService 
 		r.cacheCleanup = cleanupCache
 	}
 
-	s, cleanup, err := initializeService(ctx, scannerConfig, r.cache)
+	// Set cache in config
+	scannerConfig.Cache = r.cache
+
+	s, cleanup, err := initializeService(ctx, scannerConfig)
 	if err != nil {
 		return types.Report{}, xerrors.Errorf("unable to initialize a scan service: %w", err)
 	}
