@@ -57,7 +57,7 @@ var (
 )
 
 // InitializeScanService defines the initialize function signature of scan service
-type InitializeScanService func(context.Context, ScannerConfig) (scan.Service, func(), error)
+type InitializeScanService func(context.Context, ScannerConfig, cache.Cache) (scan.Service, func(), error)
 
 type ScannerConfig struct {
 	// e.g. image name and file path
@@ -99,6 +99,10 @@ type runner struct {
 	initializeScanService InitializeScanService
 	versionChecker        *notification.VersionChecker
 	dbOpen                bool
+
+	// Cache
+	cache        cache.Cache
+	cacheCleanup func()
 
 	// WASM modules
 	module *module.Manager
@@ -173,6 +177,11 @@ func (r *runner) Close(ctx context.Context) error {
 
 	if err := r.module.Close(ctx); err != nil {
 		errs = multierror.Append(errs, err)
+	}
+
+	// Clean up cache if initialized
+	if r.cacheCleanup != nil {
+		r.cacheCleanup()
 	}
 
 	// silently check if there is notifications
@@ -682,7 +691,18 @@ func (r *runner) scan(ctx context.Context, opts flag.Options, initializeService 
 	if err != nil {
 		return types.Report{}, err
 	}
-	s, cleanup, err := initializeService(ctx, scannerConfig)
+
+	// Initialize cache once for standalone mode if not already initialized
+	if r.cache == nil && opts.ServerAddr == "" {
+		c, cleanupCache, err := cache.New(scannerConfig.CacheOptions)
+		if err != nil {
+			return types.Report{}, xerrors.Errorf("unable to initialize cache: %w", err)
+		}
+		r.cache = c
+		r.cacheCleanup = cleanupCache
+	}
+
+	s, cleanup, err := initializeService(ctx, scannerConfig, r.cache)
 	if err != nil {
 		return types.Report{}, xerrors.Errorf("unable to initialize a scan service: %w", err)
 	}
