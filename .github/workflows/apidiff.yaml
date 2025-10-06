@@ -1,0 +1,222 @@
+name: API Diff Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'pkg/**/*.go'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  apidiff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Install go-apidiff
+        run: go install github.com/joelanford/go-apidiff@latest
+
+      - name: Find merge base
+        id: merge-base
+        run: |
+          # Get the merge base between PR head and base branch
+          MERGE_BASE=$(git merge-base HEAD ${{ github.event.pull_request.base.sha }})
+          echo "merge_base=$MERGE_BASE" >> $GITHUB_OUTPUT
+          echo "Merge base: $MERGE_BASE"
+
+      - name: Run API diff check
+        id: apidiff
+        run: |
+          # Run go-apidiff to compare API changes
+          echo "Comparing API changes from ${{ steps.merge-base.outputs.merge_base }} to HEAD"
+
+          # Run go-apidiff and capture output
+          if go-apidiff ${{ steps.merge-base.outputs.merge_base }} HEAD ./pkg/... > apidiff_output.txt 2>&1; then
+            echo "No API changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "API changes detected"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Always show the output for debugging
+          cat apidiff_output.txt
+
+      - name: Parse API diff output
+        id: parse
+        if: steps.apidiff.outputs.has_changes == 'true'
+        run: |
+          # Parse the apidiff output and format it for GitHub comment
+          cat apidiff_output.txt | awk '
+          BEGIN {
+            print "## 📊 API Changes Detected\n"
+            incompatible = ""
+            compatible = ""
+            current_package = ""
+          }
+          /^github\.com/ {
+            if (current_package != "") {
+              if (incompatible != "" || compatible != "") {
+                print "### 📦 Package: `" current_package "`\n"
+                if (incompatible != "") {
+                  print "#### ⚠️ Incompatible Changes (Breaking)\n"
+                  print incompatible
+                }
+                if (compatible != "") {
+                  print "#### ✅ Compatible Changes\n"
+                  print compatible
+                }
+              }
+            }
+            current_package = $0
+            gsub(/:$/, "", current_package)
+            incompatible = ""
+            compatible = ""
+          }
+          /^Incompatible changes:/ {
+            incompatible_section = 1
+            compatible_section = 0
+            next
+          }
+          /^Compatible changes:/ {
+            incompatible_section = 0
+            compatible_section = 1
+            next
+          }
+          /^- / {
+            if (incompatible_section) {
+              incompatible = incompatible $0 "\n"
+            } else if (compatible_section) {
+              compatible = compatible $0 "\n"
+            }
+          }
+          END {
+            if (current_package != "") {
+              if (incompatible != "" || compatible != "") {
+                print "### 📦 Package: `" current_package "`\n"
+                if (incompatible != "") {
+                  print "#### ⚠️ Incompatible Changes (Breaking)\n"
+                  print incompatible
+                }
+                if (compatible != "") {
+                  print "#### ✅ Compatible Changes\n"
+                  print compatible
+                }
+              }
+            }
+          }
+          ' > formatted_output.md
+
+          # Save formatted output
+          echo "formatted_output<<EOF" >> $GITHUB_OUTPUT
+          cat formatted_output.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Add or remove label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const hasChanges = '${{ steps.apidiff.outputs.has_changes }}' === 'true';
+            const labelName = 'apidiff';
+
+            try {
+              if (hasChanges) {
+                // Add the label if API changes are detected
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  labels: [labelName]
+                });
+                console.log(`Added '${labelName}' label to PR #${context.issue.number}`);
+              } else {
+                // Remove the label if no API changes
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    name: labelName
+                  });
+                  console.log(`Removed '${labelName}' label from PR #${context.issue.number}`);
+                } catch (error) {
+                  // Label might not exist on the PR, which is fine
+                  if (error.status !== 404) {
+                    throw error;
+                  }
+                }
+              }
+            } catch (error) {
+              console.error('Error managing label:', error);
+              // Don't fail the workflow if label operations fail
+            }
+
+      - name: Comment on PR
+        if: steps.apidiff.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${{ steps.parse.outputs.formatted_output }}`;
+
+            // Find existing comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## 📊 API Changes Detected')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+              console.log('Updated existing API diff comment');
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+              console.log('Created new API diff comment');
+            }
+
+      - name: Request review from trivy-premium team
+        if: steps.apidiff.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                team_reviewers: ['trivy-premium']
+              });
+              console.log('Requested review from aquasecurity/trivy-premium team');
+            } catch (error) {
+              console.error('Error requesting review:', error);
+              // Don't fail the workflow if review request fails
+              // The team might not exist or we might not have permissions
+            }
