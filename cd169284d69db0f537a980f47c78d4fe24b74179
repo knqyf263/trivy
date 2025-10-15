@@ -1,0 +1,29 @@
+Context: This commit implements a unique Report ID feature for Trivy scan reports.
+
+Original Request:
+The requirement was to add a unique ID to scan reports to link local reports with Trivy Cloud SaaS reports. Three implementation approaches were considered:
+1. UUID generation (chosen approach)
+2. Hash of Artifact ID + Timestamp
+3. Hybrid approach
+
+Implementation Decision:
+- Used UUID v4 for unique report identification
+- Added ReportID field to the Report struct in pkg/types/report.go
+- UUID is automatically generated in pkg/scan/service.go during ScanArtifact
+- Leveraged existing pkg/uuid package with mock support for testing
+
+Rationale for UUID Approach:
+- Guarantees uniqueness (near-zero collision probability)
+- Simple implementation using existing uuid library
+- Easy management in Trivy Cloud
+- Concise format (36 characters)
+
+Trade-offs:
+- No reproducibility (different ID for same scan)
+- No semantic information in the ID for debugging
+
+Future Considerations:
+- Add --report-id flag to allow external ID specification
+- Enable reproducible IDs for CI/CD environments where needed
+
+This implementation provides a solid foundation for report tracking between local scans and Trivy Cloud.
